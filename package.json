@@ -1,0 +1,23 @@
+{
+  "name": "boneare-adm-api",
+  "version": "1.0.0",
+  "description": "API for the Sistema de gestao administrativa do Boneare Cafe",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "mocha --exit"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  }
+}
