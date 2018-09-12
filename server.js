@@ -8,7 +8,10 @@ const
 
 module.exports = async () => {
     app.use(bodyParser.json());
-    app.use(cors());
+    app.use(cors({
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Content-Type', 'Authentication']
+    }));
 
     app.use(log.init);
 
