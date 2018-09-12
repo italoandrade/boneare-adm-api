@@ -10,7 +10,8 @@ async function init(req, res, next) {
         startTime: new Date(),
         body: req.body,
         params: req.params,
-        query: req.query
+        query: req.query,
+        headers: req.headers
     };
 
     res.finish = (data) => {
