@@ -8,7 +8,8 @@ module.exports = {
 async function signIn(req, res) {
     const user = {
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        token: req.headers.authentication
     };
 
     const userInfo = await mock.signIn(user);
