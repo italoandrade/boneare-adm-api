@@ -13,9 +13,9 @@ async function signIn(user) {
                 token: 'TOKENTEST'
             }
         } else {
-            throw {httpCode: 403, message: 'Senha incorreta'}
+            throw {httpCode: 403, message: 'Senha incorreta', code: 2}
         }
     } else {
-        throw {httpCode: 403, message: 'Usuário não encontrado'}
+        throw {httpCode: 403, message: 'Usuário não encontrado', code: 1}
     }
 }
