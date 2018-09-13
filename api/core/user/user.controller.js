@@ -1,18 +1,17 @@
-const
-    mock = require('./user.mock');
+const service = require('./user.service');
 
 module.exports = {
     signIn
 };
 
 async function signIn(req, res) {
-    const user = {
+    const params = {
         email: req.body.email,
         password: req.body.password,
         token: req.headers.authentication
     };
 
-    const userInfo = await mock.signIn(user);
+    const data = await service.signIn(params);
 
-    res.finish(userInfo)
+    res.finish(data)
 }
