@@ -4,29 +4,21 @@ module.exports = {
 
 async function signIn(user) {
     const userInfo = {
-        user: {
-            name: 'Teste',
-            email: 'test@test.com',
-            color: '#2196f3'
-        },
-        token: 'TOKENTEST'
+        id: 1,
+        name: 'Test',
+        email: 'test@test.com',
+        color: 1,
+        picture: null,
+        correctPassword: user.password === 'test'
     };
 
-    if (user.token) {
-        if (user.token === 'TOKENTEST') {
-            return userInfo;
-        } else {
-            throw {httpCode: 403, message: 'Token inválido', code: 3}
-        }
+    if (user.id) {
+        return userInfo;
     } else {
-        if (user.email === 'test@test.com') {
-            if (user.password === 'test') {
-                return userInfo;
-            } else {
-                throw {httpCode: 403, message: 'Senha incorreta', code: 2}
-            }
-        } else {
-            throw {httpCode: 403, message: 'Usuário não encontrado', code: 1}
+        if (user.email !== 'test@test.com') {
+            return null;
         }
+
+        return userInfo;
     }
 }
