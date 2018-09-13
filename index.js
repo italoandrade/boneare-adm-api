@@ -13,5 +13,6 @@ if (config.env !== 'dev' && cluster.isMaster) {
     cluster.on('exit', worker => console.error(`[Cluster]: Worker ${worker.process.pid} died`))
 } else {
     config.env === 'dev' && console.log('[Server]: Development mode enabled');
+    config.debug && console.log('[Server]: Debug mode enabled');
     server()
 }

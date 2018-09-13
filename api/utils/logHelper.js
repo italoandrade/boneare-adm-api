@@ -1,3 +1,5 @@
+const config = require('../config');
+
 module.exports = {
     init,
     save
@@ -30,9 +32,11 @@ async function save(req, res, next) {
         response: res.response,
         error: res.error
     };
-    req.log.time = (req.log.endTime.getTime() - req.log.startTime.getTime()) + 'ms';
+    req.log.executionTime = (req.log.endTime.getTime() - req.log.startTime.getTime()) + 'ms';
 
-    console.info('[Log]:', req.log);
+    if (config.debug) {
+        console.info('[Log]:', req.log);
+    }
 
     next()
 }
