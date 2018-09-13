@@ -1,6 +1,7 @@
 const config = {
     env: process.env.NODE_ENV || 'dev',
     debug: process.env.DEBUG === 'true',
+    mock: process.env.MOCK === 'true',
     clusterCount: process.env.CLUSTER_COUNT || require('os').cpus().length,
     host: process.env.HOST || 'localhost',
     port: process.env.PORT || 3000,

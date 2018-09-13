@@ -12,13 +12,17 @@ const db = pgp({
     password: config.db.password
 });
 
-db.connect()
-    .then(obj => {
-        console.log('[Database]: Connected');
-        obj.done();
-    })
-    .catch(error => {
-        console.error('[Database]: Could not connect', error);
-    });
+if (!config.mock) {
+    db.connect()
+        .then(obj => {
+            console.log('[Database]: Connected');
+            obj.done();
+        })
+        .catch(error => {
+            console.error('[Database]: Could not connect', error);
+        });
+} else {
+    console.log('[Server]: Mock mode enabled');
+}
 
 module.exports = db;

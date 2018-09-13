@@ -1,7 +1,8 @@
 const
-    repository = require('./user.repository'),
     tokenHelper = require('../../utils/tokenHelper'),
-    colorHelper = require('../../utils/colorHelper');
+    colorHelper = require('../../utils/colorHelper'),
+    config = require('../../config'),
+    repository = !config.mock ? require('./user.repository') : require('./user.mock');
 
 module.exports = {
     signIn
