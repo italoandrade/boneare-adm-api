@@ -18,8 +18,7 @@ db.connect()
         obj.done();
     })
     .catch(error => {
-        console.log('[Database]: Could not connect');
-        console.error(error);
+        console.error('[Database]: Could not connect', error);
     });
 
 module.exports = db;
