@@ -5,14 +5,15 @@ module.exports = {
 async function signIn(user) {
     const userInfo = {
         user: {
-            name: 'Ítalo Andrade',
-            email: user.email
+            name: 'Teste',
+            email: 'test@test.com',
+            color: '#2196f3'
         },
         token: 'TOKENTEST'
     };
 
-    if (userInfo.token) {
-        if (userInfo.token === 'TOKENTEST') {
+    if (user.token) {
+        if (user.token === 'TOKENTEST') {
             return userInfo;
         } else {
             throw {httpCode: 403, message: 'Token inválido', code: 3}
