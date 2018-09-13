@@ -5,6 +5,7 @@ module.exports = {
     signIn: {
         type: 'post',
         path: '/user/sign-in',
-        method: controller.signIn
+        method: controller.signIn,
+        public: true
     }
 };

@@ -5,6 +5,7 @@ module.exports = {
     ping: {
         type: 'get',
         path: '/ping',
-        method: controller.ping
+        method: controller.ping,
+        public: true
     }
 };
