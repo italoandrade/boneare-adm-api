@@ -36,7 +36,7 @@ describe('User', () => {
             res.token.should.be.not.null;
         });
 
-        it('should return error code 1 (Usuário não encontrado)', async () => {
+        it('should return httpCode 403 and error code 1 (Usuário não encontrado)', async () => {
             try {
                 await request({
                     method: 'post',
@@ -48,11 +48,12 @@ describe('User', () => {
                     json: true
                 });
             } catch (res) {
+                res.statusCode.should.be.equal(403);
                 res.error.code.should.be.equal(1);
             }
         });
 
-        it('should return error code 2 (Senha incorreta)', async () => {
+        it('should return httpCode 403 and error code 2 (Senha incorreta)', async () => {
             try {
                 await request({
                     method: 'post',
@@ -64,11 +65,12 @@ describe('User', () => {
                     json: true
                 });
             } catch (res) {
+                res.statusCode.should.be.equal(403);
                 res.error.code.should.be.equal(2);
             }
         });
 
-        it('should return error code 3 (Token inválido)', async () => {
+        it('should return httpCode 403 and error code 3 (Token inválido)', async () => {
             try {
                 await request({
                     method: 'post',
@@ -79,6 +81,7 @@ describe('User', () => {
                     json: true
                 });
             } catch (res) {
+                res.statusCode.should.be.equal(403);
                 res.error.code.should.be.equal(3);
             }
         });

@@ -21,17 +21,17 @@ async function signIn(params) {
                     id: user.id
                 });
             } else {
-                throw {code: 2, message: 'Senha incorreta'};
+                throw {httpCode: 403, code: 2, message: 'Senha incorreta'};
             }
         } else {
-            throw {code: 1, message: 'Usuário não encontrado'};
+            throw {httpCode: 403, code: 1, message: 'Usuário não encontrado'};
         }
     } else {
         let tokenRead;
         try {
             tokenRead = await tokenHelper.read(params.token);
         } catch (e) {
-            throw {code: 3, message: 'Token inválido'}
+            throw {httpCode: 403, code: 3, message: 'Token inválido'}
         }
 
         user = await repository.signIn({id: tokenRead.id});
