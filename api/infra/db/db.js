@@ -25,4 +25,6 @@ if (!config.mock) {
     console.log('[Server]: Mock mode enabled');
 }
 
-module.exports = db;
+module.exports = {
+    func: db.func
+};
