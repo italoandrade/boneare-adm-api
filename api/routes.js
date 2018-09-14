@@ -3,7 +3,8 @@ const asyncMiddleware = require('./utils/asyncMiddleware');
 module.exports = app => {
     const functionalities = {
         ping: require('./core/ping/ping.routes'),
-        user: require('./core/user/user.routes')
+        user: require('./core/user/user.routes'),
+        client: require('./core/client/client.routes'),
     };
 
     for (const functionalityKey in functionalities) {
