@@ -1,8 +1,9 @@
 /**/
 
 
-SELECT DeleteFunctions('BoneareAdm', 'ClientListAll');
-CREATE OR REPLACE FUNCTION BoneareAdm.ClientListAll(
+SELECT DeleteFunctions('BoneareAdm', 'ClientListAll'); // old
+SELECT DeleteFunctions('BoneareAdm', 'ClientFindAll');
+CREATE OR REPLACE FUNCTION BoneareAdm.ClientFindAll(
     pFilter     VARCHAR(200),
     pSortColumn VARCHAR(100),
     pSortOrder  VARCHAR(100),
@@ -23,7 +24,7 @@ Author............: Ítalo Andrade
 Date..............: 12/09/2018
 Ex................:
 
-SELECT * FROM BoneareAdm.ClientListAll(null, null, null, 1, 10);
+SELECT * FROM BoneareAdm.ClientFindAll(null, null, null, 1, 10);
 
 */
 

@@ -12,7 +12,7 @@ module.exports = async () => {
 
     app.use(bodyParser.json());
     app.use(cors({
-        methods: ['GET', 'POST'],
+        methods: ['GET', 'POST', 'PUT'],
         allowedHeaders: ['Content-Type', 'Authentication']
     }));
 

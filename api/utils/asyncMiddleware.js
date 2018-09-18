@@ -19,7 +19,7 @@ module.exports = fn =>
                 const message = err.message || defaultMessages[httpCode];
                 const code = err.code;
                 res.error = err;
-                const debugError = config.debug ? err.err.toString() : undefined;
+                const debugError = config.debug && err.err ? err.err.toString() : undefined;
                 res.status(httpCode).send({message, code, debugError});
                 next()
             })

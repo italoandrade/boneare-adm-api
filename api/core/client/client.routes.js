@@ -2,10 +2,28 @@ const
     controller = require('./client.controller');
 
 module.exports = {
-    listAll: {
+    findAll: {
         type: 'get',
         path: '/clients',
-        method: controller.listAll,
+        method: controller.findAll,
+        public: false
+    },
+    findById: {
+        type: 'get',
+        path: '/client/:id',
+        method: controller.findById,
+        public: false
+    },
+    add: {
+        type: 'post',
+        path: '/clients',
+        method: controller.add,
+        public: false
+    },
+    update: {
+        type: 'put',
+        path: '/client/:id',
+        method: controller.update,
         public: false
     }
 };

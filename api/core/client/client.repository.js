@@ -1,11 +1,14 @@
 const db = global.db;
 
 module.exports = {
-    listAll
+    findAll,
+    findById: require('./client.mock').findById,
+    add: require('./client.mock').add,
+    update: require('./client.mock').update
 };
 
-async function listAll(params) {
-    return await db.func('BoneareAdm.ClientListAll', [
+async function findAll(params) {
+    return await db.func('BoneareAdm.ClientFindAll', [
         params.filter,
         params.sortColumn,
         params.sortOrder,
