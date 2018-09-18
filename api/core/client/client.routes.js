@@ -2,10 +2,10 @@ const
     controller = require('./client.controller');
 
 module.exports = {
-    list: {
+    listAll: {
         type: 'get',
         path: '/clients',
-        method: controller.list,
+        method: controller.listAll,
         public: false
     }
 };

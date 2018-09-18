@@ -5,7 +5,7 @@ const
 require('chai').should();
 
 describe('Client', () => {
-    describe('GET - List', () => {
+    describe('GET - List all', () => {
         it('should return a list of clients', async () => {
             const res = await request({
                 method: 'get',

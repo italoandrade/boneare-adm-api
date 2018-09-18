@@ -1,8 +1,8 @@
 module.exports = {
-    list
+    listAll
 };
 
-async function list() {
+async function listAll() {
     return [
         {id: 1, name: 'TestTestTestTestTestTestTest', lineCount: 20},
         {id: 2, name: 'TestTestTestTestTestTestTest', lineCount: 20},

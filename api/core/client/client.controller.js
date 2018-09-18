@@ -3,10 +3,10 @@ const
     repository = !config.mock ? require('./client.repository') : require('./client.mock');
 
 module.exports = {
-    list
+    listAll
 };
 
-async function list(req, res) {
+async function listAll(req, res) {
     const params = {
         filter: req.query.filter,
         sortColumn: req.query.sortColumn,
@@ -15,7 +15,7 @@ async function list(req, res) {
         pageSize: req.query.pageSize
     };
 
-    const data = await repository.list(params);
+    const data = await repository.listAll(params);
 
     res.finish(data)
 }
