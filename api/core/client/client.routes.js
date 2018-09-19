@@ -25,5 +25,11 @@ module.exports = {
         path: '/client/:id',
         method: controller.update,
         public: false
+    },
+    remove: {
+        type: 'delete',
+        path: '/client/:id',
+        method: controller.remove,
+        public: false
     }
 };

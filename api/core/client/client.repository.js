@@ -4,7 +4,8 @@ module.exports = {
     findAll,
     findById: require('./client.mock').findById,
     add: require('./client.mock').add,
-    update: require('./client.mock').update
+    update: require('./client.mock').update,
+    remove: require('./client.mock').remove
 };
 
 async function findAll(params) {

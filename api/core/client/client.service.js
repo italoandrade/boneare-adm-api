@@ -6,7 +6,8 @@ module.exports = {
     findAll,
     findById,
     add,
-    update
+    update,
+    remove
 };
 
 async function findAll(params) {
@@ -27,4 +28,8 @@ async function add(params) {
 
 async function update(params) {
     return await repository.update(params);
+}
+
+async function remove(params) {
+    return await repository.remove(params);
 }

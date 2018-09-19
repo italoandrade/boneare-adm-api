@@ -70,5 +70,14 @@ describe('Client', () => {
                 json: true
             });
         });
+    });
+    describe('DELETE - Remove', () => {
+        it('should not return error', async () => {
+            await request({
+                method: 'delete',
+                uri: `${config.url}/client/${scope.idToUpdate}`,
+                json: true
+            });
+        });
     })
 });

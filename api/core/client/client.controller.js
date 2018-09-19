@@ -5,7 +5,8 @@ module.exports = {
     findAll,
     findById,
     add,
-    update
+    update,
+    remove
 };
 
 async function findAll(req, res) {
@@ -49,6 +50,16 @@ async function update(req, res) {
     };
 
     await service.update(params);
+
+    res.finish()
+}
+
+async function remove(req, res) {
+    const params = {
+        id: req.params.id
+    };
+
+    await service.remove(params);
 
     res.finish()
 }

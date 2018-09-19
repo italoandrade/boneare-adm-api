@@ -1,4 +1,4 @@
-const CLIENTS = [
+let CLIENTS = [
     {id: 1, name: 'TestTestTestTestTestTestTest1', lineCount: 15},
     {id: 2, name: 'TestTestTestTestTestTestTest2', lineCount: 15},
     {id: 3, name: 'TestTestTestTestTestTestTest3', lineCount: 15},
@@ -20,11 +20,12 @@ module.exports = {
     findAll,
     findById,
     add,
-    update
+    update,
+    remove
 };
 
 async function findAll(params) {
-    return CLIENTS.filter(i => (+params.pageNumber === 0 && i.id <= +params.pageSize) || (+params.pageNumber === 1 && i.id >= +params.pageSize + 1 && i.id <= +params.pageSize * 2) || (+params.pageNumber === 2 && i.id >= +params.pageSize * 3))
+    return CLIENTS.filter(i => (+params.pageNumber === 0 && i.id <= +params.pageSize) || (+params.pageNumber === 1 && i.id >= +params.pageSize + 1 && i.id <= +params.pageSize * 2) || (+params.pageNumber === 2 && i.id > +params.pageSize * 2))
 }
 
 async function findById(params) {
@@ -60,7 +61,9 @@ async function add(params) {
 
 async function update(params) {
     const clientToEdit = CLIENTS.filter(i => +i.id === +params.id)[0];
-    console.log(CLIENTS);
-    console.log(params);
     clientToEdit.name = params.name;
+}
+
+async function remove(params) {
+    CLIENTS = CLIENTS.filter(i => +i.id !== +params.id);
 }
