@@ -1,7 +1,6 @@
 /**/
 
 
-SELECT DeleteFunctions('BoneareAdm', 'ClientListAll'); // old
 SELECT DeleteFunctions('BoneareAdm', 'ClientFindAll');
 CREATE OR REPLACE FUNCTION BoneareAdm.ClientFindAll(
     pFilter     VARCHAR(200),
