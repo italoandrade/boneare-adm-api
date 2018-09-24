@@ -5,6 +5,7 @@ module.exports = app => {
         ping: require('./core/ping/ping.routes'),
         user: require('./core/user/user.routes'),
         client: require('./core/client/client.routes'),
+        product: require('./core/product/product.routes'),
     };
 
     for (const functionalityKey in functionalities) {
