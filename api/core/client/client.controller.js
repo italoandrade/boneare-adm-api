@@ -35,7 +35,12 @@ async function findById(req, res) {
 
 async function add(req, res) {
     const params = {
-        name: req.body.name
+        name: req.body.name,
+        document: req.body.document,
+        description: req.body.description,
+        address: req.body.address,
+        phones: req.body.phones,
+        emails: req.body.emails
     };
 
     const data = await service.add(params);
@@ -46,7 +51,12 @@ async function add(req, res) {
 async function update(req, res) {
     const params = {
         id: req.params.id,
-        name: req.body.name
+        name: req.body.name,
+        document: req.body.document,
+        description: req.body.description,
+        address: req.body.address,
+        phones: req.body.phones,
+        emails: req.body.emails
     };
 
     await service.update(params);

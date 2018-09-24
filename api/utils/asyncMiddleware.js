@@ -2,6 +2,7 @@ const config = require('../config');
 
 const defaultMessages = {
     404: 'Recurso não foi encontrado',
+    409: 'Operação conflitante',
     500: 'Ocorreu um erro interno'
 };
 
