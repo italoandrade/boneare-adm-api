@@ -19,14 +19,47 @@ describe('Client', () => {
                 json: true
             });
             res.should.be.an('array');
-            scope.idToFind = res[0].id;
+        });
+    });
+    describe('POST - Add', () => {
+        it('should return an ID from the added client', async () => {
+            const res = await request({
+                method: 'post',
+                uri: `${config.url}/clients`,
+                body: {
+                    name: 'Test',
+                    document: '1'
+                },
+                json: true
+            });
+            res.should.be.an('object');
+            res.id.should.be.an('number');
+            scope.idToUpdate = res.id;
+        });
+        it('should return httpCode 409 and error code 2 (Documento existente)', async () => {
+            try {
+                await request({
+                    method: 'post',
+                    uri: `${config.url}/clients`,
+                    body: {
+                        name: 'Test',
+                        document: '1'
+                    },
+                    json: true
+                });
+                throw 'should not succeed';
+            } catch (res) {
+                res.should.not.be.equal('should not succeed');
+                res.statusCode.should.be.equal(409);
+                res.error.code.should.be.equal(1);
+            }
         });
     });
     describe('GET - Find by ID', () => {
         it('should return a client', async () => {
             const res = await request({
                 method: 'get',
-                uri: `${config.url}/client/${scope.idToFind}`,
+                uri: `${config.url}/client/${scope.idToUpdate}`,
                 json: true
             });
             res.should.be.an('object');
@@ -38,25 +71,12 @@ describe('Client', () => {
                     uri: `${config.url}/client/0`,
                     json: true
                 });
+                throw 'should not succeed';
             } catch (res) {
+                res.should.not.be.equal('should not succeed');
                 res.statusCode.should.be.equal(404);
                 res.error.code.should.be.equal(1);
             }
-        });
-    });
-    describe('POST - Add', () => {
-        it('should return an ID from the added client', async () => {
-            const res = await request({
-                method: 'post',
-                uri: `${config.url}/clients`,
-                body: {
-                    name: 'Test'
-                },
-                json: true
-            });
-            res.should.be.an('object');
-            res.id.should.be.an('number');
-            scope.idToUpdate = res.id;
         });
     });
     describe('PUT - Update', () => {
@@ -78,6 +98,20 @@ describe('Client', () => {
                 uri: `${config.url}/client/${scope.idToUpdate}`,
                 json: true
             });
+        });
+        it('should return httpCode 404 and error code 1 (Cliente não encontrado)', async () => {
+            try {
+                await request({
+                    method: 'delete',
+                    uri: `${config.url}/client/${scope.idToUpdate}`,
+                    json: true
+                });
+                throw 'should not succeed';
+            } catch (res) {
+                res.should.not.be.equal('should not succeed');
+                res.statusCode.should.be.equal(404);
+                res.error.code.should.be.equal(1);
+            }
         });
     })
 });
