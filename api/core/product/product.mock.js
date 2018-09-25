@@ -1,4 +1,6 @@
-let DATA = [];
+let DATA = [
+    {id: 1, name: 'Product Test', unitWeight: 1, price: 7, lineCount: 1}
+];
 
 module.exports = {
     findAll,

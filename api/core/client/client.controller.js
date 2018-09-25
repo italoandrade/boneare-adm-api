@@ -45,7 +45,11 @@ async function add(req, res) {
 
     const data = await service.add(params);
 
-    res.finish(data)
+    res.finish({
+        code: 0,
+        message: 'Cliente adicionado',
+        returning: data
+    })
 }
 
 async function update(req, res) {
@@ -61,7 +65,10 @@ async function update(req, res) {
 
     await service.update(params);
 
-    res.finish()
+    res.finish({
+        code: 0,
+        message: 'Cliente atualizado'
+    })
 }
 
 async function remove(req, res) {
@@ -71,5 +78,8 @@ async function remove(req, res) {
 
     await service.remove(params);
 
-    res.finish()
+    res.finish({
+        code: 0,
+        message: 'Cliente excluído'
+    })
 }
