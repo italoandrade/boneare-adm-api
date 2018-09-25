@@ -6,6 +6,7 @@ module.exports = app => {
         user: require('./core/user/user.routes'),
         client: require('./core/client/client.routes'),
         product: require('./core/product/product.routes'),
+        order: require('./core/order/order.routes')
     };
 
     for (const functionalityKey in functionalities) {

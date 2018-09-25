@@ -1,5 +1,5 @@
 let DATA = [
-    {id: 1, name: 'Product Test', unitWeight: 1, price: 7, lineCount: 1}
+    {id: 1, name: 'Produto teste', unitWeight: 1, price: 7, lineCount: 1}
 ];
 
 module.exports = {

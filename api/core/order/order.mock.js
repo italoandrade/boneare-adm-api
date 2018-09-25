@@ -1,5 +1,5 @@
 let DATA = [
-    {id: 1, name: 'Cliente teste', lineCount: 1}
+    {id: 1, name: 'Pedido teste', client: 'Cliente teste', totalCost: 7, totalCostAll: 7, lineCount: 1}
 ];
 
 module.exports = {
@@ -24,21 +24,13 @@ async function findById(params) {
 }
 
 async function add(params) {
-    const existingDocument = DATA.filter(i => i.document === params.document);
-    if (existingDocument.length) {
-        throw {httpCode: 409, code: 1, message: 'Documento existente'}
-    }
-
     const newId = (DATA[DATA.length - 1] ? DATA[DATA.length - 1].id : 0) + 1;
 
     DATA.push({
         id: newId,
         name: params.name,
-        document: params.document,
-        description: params.description,
-        address: params.address,
-        phones: params.phones,
-        emails: params.emails,
+        unitWeight: params.unitWeight,
+        price: params.price,
         createdBy: 'Teste',
         creationDate: new Date().toISOString(),
         updatedBy: null,
@@ -55,17 +47,14 @@ async function add(params) {
 async function update(params) {
     let toEdit = DATA.filter(i => +i.id === +params.id);
     if (!toEdit.length) {
-        throw {httpCode: 404, code: 1, message: 'Cliente não encontrado'}
+        throw {httpCode: 404, code: 1, message: 'Pedido não encontrado'}
     }
 
     toEdit = toEdit[0];
 
     toEdit.name = params.name;
-    toEdit.document = params.document;
-    toEdit.description = params.description;
-    toEdit.address = params.address;
-    toEdit.phones = params.phones;
-    toEdit.emails = params.emails;
+    toEdit.unitWeight = params.unitWeight;
+    toEdit.price = params.price;
     toEdit.updatedBy = 'Teste';
     toEdit.lastUpdateDate = new Date().toISOString();
 }
@@ -73,7 +62,7 @@ async function update(params) {
 async function remove(params) {
     const existing = DATA.filter(i => +i.id === +params.id);
     if (!existing.length) {
-        throw {httpCode: 404, code: 1, message: 'Cliente não encontrado'}
+        throw {httpCode: 404, code: 1, message: 'Pedido não encontrado'}
     }
 
     DATA = DATA.filter(i => +i.id !== +params.id);

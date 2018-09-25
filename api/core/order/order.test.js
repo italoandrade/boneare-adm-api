@@ -8,10 +8,10 @@ let scope = {};
 
 describe('Order', () => {
     describe('GET - Find all', () => {
-        it('should return a list of products', async () => {
+        it('should return a list of orders', async () => {
             const res = await request({
                 method: 'get',
-                uri: `${config.url}/products`,
+                uri: `${config.url}/orders`,
                 qs: {
                     pageNumber: 0,
                     pageSize: 10
@@ -22,14 +22,13 @@ describe('Order', () => {
         });
     });
     describe('POST - Add', () => {
-        it('should return an ID from the added product', async () => {
+        it('should return an ID from the added order', async () => {
             const res = await request({
                 method: 'post',
-                uri: `${config.url}/products`,
+                uri: `${config.url}/orders`,
                 body: {
                     name: 'Test',
-                    unitWeight: 1,
-                    price: 7
+                    document: '1'
                 },
                 json: true
             });
@@ -39,19 +38,19 @@ describe('Order', () => {
         });
     });
     describe('GET - Find by ID', () => {
-        it('should return a product', async () => {
+        it('should return a order', async () => {
             const res = await request({
                 method: 'get',
-                uri: `${config.url}/product/${scope.idToUpdate}`,
+                uri: `${config.url}/order/${scope.idToUpdate}`,
                 json: true
             });
             res.should.be.an('object');
         });
-        it('should return httpCode 404 and error code 1 (Produto não encontrado)', async () => {
+        it('should return httpCode 404 and error code 1 (Pedido não encontrado)', async () => {
             try {
                 await request({
                     method: 'get',
-                    uri: `${config.url}/product/0`,
+                    uri: `${config.url}/order/0`,
                     json: true
                 });
                 throw 'should not succeed';
@@ -66,11 +65,9 @@ describe('Order', () => {
         it('should not return error', async () => {
             await request({
                 method: 'put',
-                uri: `${config.url}/product/${scope.idToUpdate}`,
+                uri: `${config.url}/order/${scope.idToUpdate}`,
                 body: {
-                    name: 'Test updated',
-                    unitWeight: 1,
-                    price: 7
+                    name: 'Test updated'
                 },
                 json: true
             });
@@ -80,15 +77,15 @@ describe('Order', () => {
         it('should not return error', async () => {
             await request({
                 method: 'delete',
-                uri: `${config.url}/product/${scope.idToUpdate}`,
+                uri: `${config.url}/order/${scope.idToUpdate}`,
                 json: true
             });
         });
-        it('should return httpCode 404 and error code 1 (Produto não encontrado)', async () => {
+        it('should return httpCode 404 and error code 1 (Pedido não encontrado)', async () => {
             try {
                 await request({
                     method: 'delete',
-                    uri: `${config.url}/product/${scope.idToUpdate}`,
+                    uri: `${config.url}/order/${scope.idToUpdate}`,
                     json: true
                 });
                 throw 'should not succeed';

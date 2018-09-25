@@ -1,6 +1,6 @@
 const
     config = require('../../config'),
-    repository = !config.mock ? require('./product.repository') : require('./product.mock');
+    repository = !config.mock ? require('./order.repository') : require('./order.mock');
 
 module.exports = {
     findAll,
@@ -17,7 +17,7 @@ async function findAll(params) {
 async function findById(params) {
     const data = await repository.findById(params);
     if (!data) {
-        throw {httpCode: 404, code: 1, message: 'Produto não encontrado'}
+        throw {httpCode: 404, code: 1, message: 'Pedido não encontrado'}
     }
     return data;
 }
