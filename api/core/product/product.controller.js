@@ -4,6 +4,7 @@ const
 module.exports = {
     findAll,
     findById,
+    findAutocomplete,
     add,
     update,
     remove
@@ -29,6 +30,17 @@ async function findById(req, res) {
     };
 
     const data = await service.findById(params);
+
+    res.finish(data)
+}
+
+async function findAutocomplete(req, res) {
+    const params = {
+        filter: req.body.filter,
+        unless: req.body.unless
+    };
+
+    const data = await service.findAutocomplete(params);
 
     res.finish(data)
 }

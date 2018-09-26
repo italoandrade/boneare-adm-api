@@ -14,6 +14,12 @@ module.exports = {
         method: controller.findById,
         public: false
     },
+    findAutocomplete: {
+        type: 'post',
+        path: '/products/autocomplete',
+        method: controller.findAutocomplete,
+        public: false
+    },
     add: {
         type: 'post',
         path: '/products',

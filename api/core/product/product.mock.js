@@ -5,6 +5,7 @@ let DATA = [
 module.exports = {
     findAll,
     findById,
+    findAutocomplete,
     add,
     update,
     remove
@@ -21,6 +22,10 @@ async function findById(params) {
     }
 
     return null;
+}
+
+async function findAutocomplete(params) {
+    return DATA.filter(x => (!params.filter || x.name.indexOf(params.filter) > -1) && !(params.unless || []).includes(x.id)).slice(0, 7);
 }
 
 async function add(params) {

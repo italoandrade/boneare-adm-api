@@ -21,6 +21,16 @@ describe('Order', () => {
             res.should.be.an('array');
         });
     });
+    describe('POST - Find all for autocomplete', () => {
+        it('should return a list of products for autocomplete', async () => {
+            const res = await request({
+                method: 'post',
+                uri: `${config.url}/clients/autocomplete`,
+                json: true
+            });
+            res.should.be.an('array');
+        });
+    });
     describe('POST - Add', () => {
         it('should return an ID from the added product', async () => {
             const res = await request({

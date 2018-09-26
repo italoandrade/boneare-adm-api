@@ -5,6 +5,7 @@ const
 module.exports = {
     findAll,
     findById,
+    findAutocomplete,
     add,
     update,
     remove
@@ -20,6 +21,10 @@ async function findById(params) {
         throw {httpCode: 404, code: 1, message: 'Produto não encontrado'}
     }
     return data;
+}
+
+async function findAutocomplete(params) {
+    return await repository.findAutocomplete(params);
 }
 
 async function add(params) {
