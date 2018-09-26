@@ -1,10 +1,20 @@
 let DATA = [
-    {id: 1, name: 'Cliente teste', lineCount: 1}
+    {id: 1, name: 'Cliente teste 1', lineCount: 10},
+    {id: 2, name: 'Cliente teste 2', lineCount: 10},
+    {id: 3, name: 'Cliente teste 3', lineCount: 10},
+    {id: 4, name: 'Cliente teste 4', lineCount: 10},
+    {id: 5, name: 'Cliente teste 5', lineCount: 10},
+    {id: 6, name: 'Cliente teste 6', lineCount: 10},
+    {id: 7, name: 'Cliente teste 7', lineCount: 10},
+    {id: 8, name: 'Cliente teste 8', lineCount: 10},
+    {id: 9, name: 'Cliente teste 9', lineCount: 10},
+    {id: 10, name: 'Cliente teste 10', lineCount: 10},
 ];
 
 module.exports = {
     findAll,
     findById,
+    findAutocomplete,
     add,
     update,
     remove
@@ -21,6 +31,10 @@ async function findById(params) {
     }
 
     return null;
+}
+
+async function findAutocomplete(params) {
+    return DATA.filter(x => (!params.filter || x.name.indexOf(params.filter) > -1) && !(params.unless || []).includes(x.id)).slice(0, 7);
 }
 
 async function add(params) {

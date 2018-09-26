@@ -3,6 +3,7 @@ const db = global.db;
 module.exports = {
     findAll,
     findById: require('./client.mock').findById,
+    findAutocomplete: require('./client.mock').findAutocomplete,
     add: require('./client.mock').add,
     update: require('./client.mock').update,
     remove: require('./client.mock').remove
