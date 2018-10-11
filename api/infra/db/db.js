@@ -26,5 +26,10 @@ if (!config.mock) {
 }
 
 module.exports = {
+    json: async function (query, params) {
+        let result = await db.proc(query, params);
+
+        return result ? result[Object.keys(result)[0]] : null;
+    },
     func: db.func
 };
