@@ -1,7 +1,7 @@
 /**/
 
 
-SELECT DeleteFunctions('BoneareAdm', 'UserSignIn');
+SELECT public.DeleteFunctions('BoneareAdm', 'UserSignIn');
 CREATE OR REPLACE FUNCTION BoneareAdm.UserSignIn(
     pId       INTEGER,
     pEmail    BoneareAdm.User.email%TYPE,
@@ -44,7 +44,7 @@ BEGIN
                WHEN u.picture IS NOT NULL
                      THEN vS3Bucket || 'user/' || u.id|| '36x36/' || u.picture
                END                                         picture,
-           (u.password = crypt(pPassword, u.passwordHash)) correctPassword
+           (u.password = public.crypt(pPassword, u.passwordHash)) correctPassword
     FROM BoneareAdm.User u
     WHERE CASE
               WHEN pId IS NULL

@@ -1,7 +1,7 @@
 const db = global.db;
 
 module.exports = {
-    findAll,
+    findAll: require('./product.mock').findAll,
     findById: require('./product.mock').findById,
     findAutocomplete: require('./product.mock').findAutocomplete,
     add: require('./product.mock').add,

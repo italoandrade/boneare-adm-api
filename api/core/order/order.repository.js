@@ -9,7 +9,7 @@ module.exports = {
 };
 
 async function findAll(params) {
-    return await db.func('BoneareAdm.ClientFindAll', [
+    return await db.func('BoneareAdm.OrderFindAll', [
         params.filter,
         params.sortColumn,
         params.sortOrder,
