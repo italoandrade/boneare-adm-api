@@ -33,7 +33,7 @@ DECLARE
     vS3Bucket BoneareAdm.Settings.s3Bucket%TYPE;
 
 BEGIN
-    vS3Bucket = (SELECT s.s3Bucket FROM BoneareAdm.Settings s);
+    vS3Bucket = (SELECT s.s3Bucket FROM BoneareAdm.Settings s LIMIT 1);
 
     RETURN QUERY
     SELECT u.id,
