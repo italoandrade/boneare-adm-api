@@ -35,7 +35,7 @@ async function findById(req, res) {
 
 async function add(req, res) {
     const params = {
-        name: req.body.name,
+        description: req.body.description,
         unitWeight: req.body.unitWeight,
         price: req.body.price
     };
@@ -52,7 +52,7 @@ async function add(req, res) {
 async function update(req, res) {
     const params = {
         id: req.params.id,
-        name: req.body.name,
+        description: req.body.description,
         unitWeight: req.body.unitWeight,
         price: req.body.price
     };
