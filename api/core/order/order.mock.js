@@ -1,5 +1,5 @@
 let DATA = [
-    {id: 1, name: 'Pedido teste', client: 'Cliente teste', totalCost: 7, totalCostAll: 7, lineCount: 1}
+    {id: 1, description: 'Pedido teste', client: 'Cliente teste', totalCost: 7, totalCostAll: 7, lineCount: 1}
 ];
 
 module.exports = {
@@ -28,7 +28,7 @@ async function add(params) {
 
     DATA.push({
         id: newId,
-        name: params.name,
+        description: params.description,
         unitWeight: params.unitWeight,
         price: params.price,
         createdBy: 'Teste',
@@ -52,7 +52,7 @@ async function update(params) {
 
     toEdit = toEdit[0];
 
-    toEdit.name = params.name;
+    toEdit.description = params.description;
     toEdit.unitWeight = params.unitWeight;
     toEdit.price = params.price;
     toEdit.updatedBy = 'Teste';
