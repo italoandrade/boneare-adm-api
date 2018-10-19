@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,386" last-zoom="1"
+	 default-schema="boneareadm" default-owner="italo">
+<role name="italo"
+      superuser="true"
+      createdb="true"
+      createrole="true"
+      login="true"
+      encrypted="true"
+      password="Aspr1ll4**">
+</role>
+
+<database name="boneareadm" encoding="UTF8" lc-collate="pt_BR" lc-ctype="pt_BR" is-template="false" allow-conns="true">
+	<role name="italo"/>
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="boneareadm" rect-visible="true" fill-color="#e1e1e1">
+	<role name="italo"/>
+</schema>
+
+<sequence name="user_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="user">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="320" y="320"/>
+	<column name="id" not-null="true" sequence="boneareadm.user_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="varchar" length="64"/>
+	</column>
+	<column name="password_hash" not-null="true">
+		<type name="varchar" length="64"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="60"/>
+	</column>
+	<column name="picture">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="created_by">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="creation_date" not-null="true" default-value="now()">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="last_update_by">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="last_update_date">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="user_pk" type="pk-constr" table="boneareadm.&quot;user&quot;">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="client_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="client">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="800" y="320"/>
+	<column name="id" not-null="true" sequence="boneareadm.client_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="document">
+		<type name="varchar" length="20"/>
+	</column>
+	<column name="description">
+		<type name="varchar" length="200"/>
+	</column>
+	<column name="created_by" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="creation_date" not-null="true" default-value="now()">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="last_updated_by">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="last_update_date">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="client_pk" type="pk-constr" table="boneareadm.client">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="product_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="product">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="320" y="660"/>
+	<column name="id" not-null="true" sequence="boneareadm.product_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="weight" not-null="true">
+		<type name="numeric" length="10" precision="2"/>
+	</column>
+	<column name="price" not-null="true">
+		<type name="numeric" length="10" precision="2"/>
+	</column>
+	<column name="created_by" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="creation_date" not-null="true" default-value="now()">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="last_updated_by">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="last_updated_date">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="product_pk" type="pk-constr" table="boneareadm.product">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="client_address">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="800" y="500"/>
+	<column name="client_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="zipcode">
+		<type name="varchar" length="8"/>
+	</column>
+	<column name="street">
+		<type name="varchar" length="200"/>
+	</column>
+	<column name="complement">
+		<type name="varchar" length="200"/>
+	</column>
+	<column name="district">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="city">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="state">
+		<type name="varchar" length="2"/>
+	</column>
+	<column name="number">
+		<type name="varchar" length="20"/>
+	</column>
+	<constraint name="client_address_pk" type="pk-constr" table="boneareadm.client_address">
+		<columns names="client_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="client_address_client_id_idx" table="boneareadm.client_address"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="client_id"/>
+		</idxelement>
+</index>
+
+<sequence name="order_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="order">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="800" y="740"/>
+	<column name="id" not-null="true" sequence="boneareadm.order_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="description">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="client_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="created_by" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="creation_date" not-null="true" default-value="now()">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="last_updated_by">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="last_update_date">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="order_pk" type="pk-constr" table="boneareadm.&quot;order&quot;">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="settings">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="100" y="320"/>
+	<column name="s3bucket" not-null="true">
+		<type name="varchar" length="200"/>
+	</column>
+</table>
+
+<sequence name="order_product_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="order_product">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="300" y="940"/>
+	<column name="id" not-null="true" sequence="boneareadm.order_product_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="order_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="product_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="quantity" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="entry" not-null="true" default-value="false">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="created_by" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="creation_date" not-null="true" default-value="now()">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="last_updated_by">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="last_update_date">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="order_product_pk" type="pk-constr" table="boneareadm.order_product">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="transaction_type">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="1140" y="780"/>
+	<column name="id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="10"/>
+	</column>
+	<constraint name="transaction_type_pk" type="pk-constr" table="boneareadm.transaction_type">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•name⸣
+1•Receita⸣
+2•Despesa]]>
+	</initial-data>
+</table>
+
+<index name="transaction_type_id_idx" table="boneareadm.transaction_type"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
+<sequence name="order_transaction_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="order_transaction">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="900" y="1000"/>
+	<column name="id" not-null="true" sequence="boneareadm.order_transaction_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="order_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="type" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="value" not-null="true">
+		<type name="numeric" length="10" precision="2"/>
+	</column>
+	<column name="date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="created_by" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="creation_date" not-null="true" default-value="now()">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="last_updated_by">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="last_update_date">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="order_transaction_pk" type="pk-constr" table="boneareadm.order_transaction">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="user_id_idx" table="boneareadm.&quot;user&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
+<index name="user_email_idx" table="boneareadm.&quot;user&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="email"/>
+		</idxelement>
+</index>
+
+<index name="client_id_idx" table="boneareadm.client"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
+<index name="product_id_idx" table="boneareadm.product"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
+<index name="order_id_idx" table="boneareadm.&quot;order&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
+<index name="order_client_id_idx" table="boneareadm.&quot;order&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
+<index name="order_product_order_id_idx" table="boneareadm.order_product"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="order_id"/>
+		</idxelement>
+</index>
+
+<index name="order_transaction_order_id_idx" table="boneareadm.order_transaction"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="order_id"/>
+		</idxelement>
+</index>
+
+<constraint name="user_created_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.&quot;user&quot;">
+	<columns names="created_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.&quot;user&quot;">
+	<columns names="last_update_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="client_created_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.client" table="boneareadm.client">
+	<columns names="created_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="client_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.client">
+	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="product_created_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.product">
+	<columns names="created_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="product_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.product">
+	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="client_address_client_id_client_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.client" table="boneareadm.client_address">
+	<columns names="client_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_client_id_client_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.client" table="boneareadm.&quot;order&quot;">
+	<columns names="client_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_created_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.&quot;order&quot;">
+	<columns names="created_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.&quot;order&quot;">
+	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_product_order_id_order_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;order&quot;" table="boneareadm.order_product">
+	<columns names="order_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_product_product_id_product_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.product" table="boneareadm.order_product">
+	<columns names="product_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_product_created_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.order_product">
+	<columns names="created_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_product_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.order_product">
+	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_transaction_order_id_order_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;order&quot;" table="boneareadm.order_transaction">
+	<columns names="order_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_transaction_type_transaction_type_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.transaction_type" table="boneareadm.order_transaction">
+	<columns names="type" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_transaction_created_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.order_transaction">
+	<columns names="created_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="order_transaction_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.order_transaction">
+	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_user_user" type="relfk"
+	 src-table="boneareadm.&quot;user&quot;"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="user_created_by_user_id_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="611.174" y="380.816"/>
+	<position x="611.174" y="309"/>
+	<position x="506.783" y="309"/>
+	</line>
+</relationship>
+
+<relationship name="rel_user_user1" type="relfk"
+	 src-table="boneareadm.&quot;user&quot;"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="user_last_updated_by_user_id_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="625.77" y="395.412"/>
+	<position x="625.77" y="294.404"/>
+	<position x="492.187" y="294.404"/>
+	</line>
+</relationship>
+
+<relationship name="rel_client_client" type="relfk"
+	 src-table="boneareadm.client"
+	 dst-table="boneareadm.client" reference-fk="client_created_by_user_id_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1094.49" y="370.816"/>
+	<position x="1094.49" y="309"/>
+	<position x="988.994" y="309"/>
+	</line>
+</relationship>
+
+<relationship name="rel_client_user" type="relfk"
+	 src-table="boneareadm.client"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="client_last_updated_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_product_user" type="relfk"
+	 src-table="boneareadm.product"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="product_created_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_product_user1" type="relfk"
+	 src-table="boneareadm.product"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="product_last_updated_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_client_address_client" type="relfk"
+	 src-table="boneareadm.client_address"
+	 dst-table="boneareadm.client" reference-fk="client_address_client_id_client_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_user" type="relfk"
+	 src-table="boneareadm.&quot;order&quot;"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="order_created_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_client" type="relfk"
+	 src-table="boneareadm.&quot;order&quot;"
+	 dst-table="boneareadm.client" reference-fk="order_client_id_client_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_user1" type="relfk"
+	 src-table="boneareadm.&quot;order&quot;"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="order_last_updated_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_product_order" type="relfk"
+	 src-table="boneareadm.order_product"
+	 dst-table="boneareadm.&quot;order&quot;" reference-fk="order_product_order_id_order_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_product_product" type="relfk"
+	 src-table="boneareadm.order_product"
+	 dst-table="boneareadm.product" reference-fk="order_product_product_id_product_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_product_user" type="relfk"
+	 src-table="boneareadm.order_product"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="order_product_created_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_product_user1" type="relfk"
+	 src-table="boneareadm.order_product"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="order_product_last_updated_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_transaction_order" type="relfk"
+	 src-table="boneareadm.order_transaction"
+	 dst-table="boneareadm.&quot;order&quot;" reference-fk="order_transaction_order_id_order_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_transaction_transaction_type" type="relfk"
+	 src-table="boneareadm.order_transaction"
+	 dst-table="boneareadm.transaction_type" reference-fk="order_transaction_type_transaction_type_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_transaction_user" type="relfk"
+	 src-table="boneareadm.order_transaction"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="order_transaction_created_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_order_transaction_user1" type="relfk"
+	 src-table="boneareadm.order_transaction"
+	 dst-table="boneareadm.&quot;user&quot;" reference-fk="order_transaction_last_updated_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>

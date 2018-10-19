@@ -44,7 +44,7 @@ BEGIN
                WHEN u.picture IS NOT NULL
                      THEN vS3Bucket || 'user/' || u.id|| '36x36/' || u.picture
                END                                         picture,
-           (u.password = public.crypt(pPassword, u.passwordHash)) correctPassword
+           (u.password = public.crypt(pPassword, u.password_hash)) correctPassword
     FROM BoneareAdm.User u
     WHERE CASE
               WHEN pId IS NULL
