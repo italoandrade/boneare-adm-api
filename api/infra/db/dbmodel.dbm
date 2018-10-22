@@ -11,7 +11,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
       createrole="true"
       login="true"
       encrypted="true"
-      password="Aspr1ll4**">
+      password="Aspr1ll4**"
+      sql-disabled="true">
 </role>
 
 <database name="boneareadm" encoding="UTF8" lc-collate="pt_BR" lc-ctype="pt_BR" is-template="false" allow-conns="true">
@@ -155,6 +156,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="street">
 		<type name="varchar" length="200"/>
 	</column>
+	<column name="number">
+		<type name="varchar" length="20"/>
+	</column>
 	<column name="complement">
 		<type name="varchar" length="200"/>
 	</column>
@@ -166,9 +170,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="state">
 		<type name="varchar" length="2"/>
-	</column>
-	<column name="number">
-		<type name="varchar" length="20"/>
 	</column>
 	<constraint name="client_address_pk" type="pk-constr" table="boneareadm.client_address">
 		<columns names="client_id" ref-type="src-columns"/>
@@ -398,6 +399,66 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
+<sequence name="client_phone_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="client_phone">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="1160" y="320"/>
+	<column name="id" not-null="true" sequence="boneareadm.client_phone_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="client_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="number" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<constraint name="client_phone_pk" type="pk-constr" table="boneareadm.client_phone">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="client_phone_client_id_idx" table="boneareadm.client_phone"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="number"/>
+		</idxelement>
+</index>
+
+<sequence name="client_email_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
+	<schema name="boneareadm"/>
+</sequence>
+
+<table name="client_email">
+	<schema name="boneareadm"/>
+	<role name="italo"/>
+	<position x="1160" y="460"/>
+	<column name="id" not-null="true" sequence="boneareadm.client_email_id_seq">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="client_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<constraint name="client_email_pk" type="pk-constr" table="boneareadm.client_email">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="client_email_client_id_idx" table="boneareadm.client_email"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
 <constraint name="user_created_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.&quot;user&quot;">
 	<columns names="created_by" ref-type="src-columns"/>
@@ -503,6 +564,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <constraint name="order_transaction_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.order_transaction">
 	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="client_phone_client_id_client_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.client" table="boneareadm.client_phone">
+	<columns names="client_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="client_email_client_id_client_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.client" table="boneareadm.client_email">
+	<columns names="client_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -612,6 +685,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="rel_order_transaction_user1" type="relfk"
 	 src-table="boneareadm.order_transaction"
 	 dst-table="boneareadm.&quot;user&quot;" reference-fk="order_transaction_last_updated_by_user_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_client_phone_client" type="relfk"
+	 src-table="boneareadm.client_phone"
+	 dst-table="boneareadm.client" reference-fk="client_phone_client_id_client_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_client_email_client" type="relfk"
+	 src-table="boneareadm.client_email"
+	 dst-table="boneareadm.client" reference-fk="client_email_client_id_client_id_fk"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
