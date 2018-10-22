@@ -2,7 +2,7 @@ const db = global.db;
 
 module.exports = {
     findAll,
-    findById: require('./client.mock').findById,
+    findById,
     findAutocomplete: require('./client.mock').findAutocomplete,
     add,
     update: require('./client.mock').update,
@@ -17,6 +17,12 @@ async function findAll(params) {
         params.pageNumber,
         params.pageSize
     ]);
+}
+
+async function findById(params) {
+    return (await db.func('BoneareAdm.ClientFindById', [
+        params.id
+    ]))[0];
 }
 
 async function add(params) {

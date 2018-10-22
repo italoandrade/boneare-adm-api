@@ -48,6 +48,49 @@ $$
 LANGUAGE plpgsql;
 
 
+SELECT DeleteFunctions('BoneareAdm', 'ClientFindById');
+CREATE OR REPLACE FUNCTION BoneareAdm.ClientFindById(
+    pId BoneareAdm.Client.id%TYPE
+)
+    RETURNS TABLE(
+        "id"          BoneareAdm.Client.id%TYPE,
+        "name"        BoneareAdm.Client.name%TYPE,
+        "document"    BoneareAdm.Client.document%TYPE,
+        "description" BoneareAdm.Client.description%TYPE,
+        "address"     JSONB
+    ) AS $$
+
+/*
+Documentation
+Source file.......: client.sql
+Description.......: Find a client by ID
+Author............: Ítalo Andrade
+Date..............: 22/10/2018
+Ex................:
+
+SELECT * FROM BoneareAdm.ClientFindById(1);
+
+*/
+
+BEGIN
+    RETURN QUERY
+    SELECT c.id, c.name, c.description, c.document, jsonb_build_object(
+                                                        'zipCode', ca.zip_code,
+                                                        'street', ca.street,
+                                                        'number', ca.number,
+                                                        'complement', ca.complement,
+                                                        'district', ca.district,
+                                                        'city', ca.city,
+                                                        'state', ca.state
+        )
+    FROM BoneareAdm.Client c
+             LEFT JOIN BoneareAdm.Client_Address ca ON ca.client_id = c.id
+    WHERE c.id = pId;
+END;
+$$
+LANGUAGE plpgsql;
+
+
 SELECT DeleteFunctions('BoneareAdm', 'ClientAdd');
 CREATE OR REPLACE FUNCTION BoneareAdm.ClientAdd(
     pUserIdAction BoneareAdm.User.id%TYPE,
