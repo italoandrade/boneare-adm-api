@@ -1,6 +1,6 @@
 -- Diff code generated with pgModeler (PostgreSQL Database Modeler)
 -- pgModeler version: 0.9.2-alpha
--- Diff date: 2018-10-19 17:38:03
+-- Diff date: 2018-10-22 13:50:23
 -- Source model: boneareadm
 -- Database: boneareadm
 -- PostgreSQL version: 9.6
@@ -15,10 +15,15 @@ SET search_path=public,pg_catalog,boneareadm;
 -- ddl-end --
 
 
+-- [ Dropped objects ] --
+ALTER TABLE boneareadm.client_address DROP COLUMN IF EXISTS zipcode CASCADE;
+-- ddl-end --
+
+
 -- [ Created objects ] --
--- object: entry | type: COLUMN --
--- ALTER TABLE boneareadm.order_product DROP COLUMN IF EXISTS entry CASCADE;
-ALTER TABLE boneareadm.order_product ADD COLUMN entry boolean NOT NULL DEFAULT false;
+-- object: zip_code | type: COLUMN --
+-- ALTER TABLE boneareadm.client_address DROP COLUMN IF EXISTS zip_code CASCADE;
+ALTER TABLE boneareadm.client_address ADD COLUMN zip_code varchar(8);
 -- ddl-end --
 
 
