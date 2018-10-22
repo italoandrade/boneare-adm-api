@@ -14,12 +14,12 @@ module.exports = app => {
         for (const methodKey in functionalities[functionalityKey]) {
             if (functionalities[functionalityKey].hasOwnProperty(methodKey)) {
                 const route = functionalities[functionalityKey][methodKey];
-                app[route.type](route.path, asyncMiddleware(route.method))
+                app[route.type](route.path, asyncMiddleware(route.method, route.public))
             }
         }
     }
 
     app.get('/api', asyncMiddleware((req, res) => {
         res.send(functionalities)
-    }))
+    }, true))
 };

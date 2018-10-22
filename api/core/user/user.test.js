@@ -21,6 +21,7 @@ describe('User', () => {
             res.user.should.be.not.null;
             res.token.should.be.not.null;
             scope.token = res.token;
+            global.scope.token = res.token;
         });
 
         it('should return user\'s info and token when using token', async () => {

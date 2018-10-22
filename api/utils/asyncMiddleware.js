@@ -1,4 +1,5 @@
 const config = require('../config');
+const tokenHelper = require('./tokenHelper');
 
 const defaultMessages = {
     404: 'Recurso não foi encontrado',
@@ -6,9 +7,9 @@ const defaultMessages = {
     500: 'Ocorreu um erro interno'
 };
 
-module.exports = fn =>
+module.exports = (fn, isPublic) =>
     (req, res, next) => {
-        Promise.resolve(fn(req, res, next))
+        Promise.resolve(auth(fn, isPublic, req, res, next))
             .then(() => next())
             .catch(err => {
                 if (err.constructor !== Object) {
@@ -25,3 +26,17 @@ module.exports = fn =>
                 next()
             })
     };
+
+async function auth(fn, isPublic, req, res, next) {
+    if (!isPublic) {
+        let tokenRead;
+        try {
+            tokenRead = await tokenHelper.read(req.headers.authorization);
+        } catch (e) {
+            throw {httpCode: 403, code: 1, message: 'Token inválido'}
+        }
+        req.user = tokenRead;
+    }
+
+    await fn(req, res, next)
+}

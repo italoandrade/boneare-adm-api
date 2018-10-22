@@ -12,5 +12,5 @@ async function create(data) {
 }
 
 async function read(token) {
-    return jwt.verify(token, config.hash);
+    return jwt.verify(token.replace('Bearer ', ''), config.hash);
 }

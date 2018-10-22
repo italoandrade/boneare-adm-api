@@ -8,7 +8,7 @@ async function signIn(req, res) {
     const params = {
         email: req.body.email,
         password: req.body.password,
-        token: req.headers.authentication
+        token: req.headers.authorization
     };
 
     const data = await service.signIn(params);
