@@ -4,7 +4,10 @@ const
 
 require('chai').should();
 
-let scope = {};
+let scope = {
+    document: Math.floor(Math.random() * 255).toString(),
+    token: global.scope && global.scope.token || "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTQwMjM5Mjg0fQ.Bwa2P7EovI2zGsq8-ftftLo0QD_9_xhZN3N85DZSnsQ"
+};
 
 describe('Client', () => {
     describe('GET - Find all', () => {
@@ -16,6 +19,9 @@ describe('Client', () => {
                     pageNumber: 0,
                     pageSize: 10
                 },
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
             res.should.be.an('array');
@@ -26,6 +32,9 @@ describe('Client', () => {
             const res = await request({
                 method: 'post',
                 uri: `${config.url}/clients/autocomplete`,
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
             res.should.be.an('array');
@@ -33,18 +42,28 @@ describe('Client', () => {
     });
     describe('POST - Add', () => {
         it('should return an ID from the added client', async () => {
-            const res = await request({
-                method: 'post',
-                uri: `${config.url}/clients`,
-                body: {
-                    name: 'Test',
-                    document: '1'
-                },
-                json: true
-            });
-            res.should.be.an('object');
-            res.id.should.be.an('number');
-            scope.idToUpdate = res.id;
+            try {
+                const res = await request({
+                    method: 'post',
+                    uri: `${config.url}/clients`,
+                    body: {
+                        name: 'Test',
+                        document: scope.document
+                    },
+                    headers: {
+                        'Authorization': scope.token
+                    },
+                    json: true
+                });
+                console.log(res);
+                res.should.be.an('object');
+                res.should.have.property('return');
+                res.return.should.be.an('object');
+                res.return.should.have.property('id').which.is.an('number');
+                scope.idToUpdate = res.return.id;
+            } catch (err) {
+                throw err;
+            }
         });
         it('should return httpCode 409 and error code 2 (Documento existente)', async () => {
             try {
@@ -53,7 +72,10 @@ describe('Client', () => {
                     uri: `${config.url}/clients`,
                     body: {
                         name: 'Test',
-                        document: '1'
+                        document: scope.document
+                    },
+                    headers: {
+                        'Authorization': scope.token
                     },
                     json: true
                 });
@@ -70,6 +92,9 @@ describe('Client', () => {
             const res = await request({
                 method: 'get',
                 uri: `${config.url}/client/${scope.idToUpdate}`,
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
             res.should.be.an('object');
@@ -79,6 +104,9 @@ describe('Client', () => {
                 await request({
                     method: 'get',
                     uri: `${config.url}/client/0`,
+                    headers: {
+                        'Authorization': scope.token
+                    },
                     json: true
                 });
                 throw 'should not succeed';
@@ -97,6 +125,9 @@ describe('Client', () => {
                 body: {
                     name: 'Test updated'
                 },
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
         });
@@ -106,6 +137,9 @@ describe('Client', () => {
             await request({
                 method: 'delete',
                 uri: `${config.url}/client/${scope.idToUpdate}`,
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
         });
@@ -114,6 +148,9 @@ describe('Client', () => {
                 await request({
                     method: 'delete',
                     uri: `${config.url}/client/${scope.idToUpdate}`,
+                    headers: {
+                        'Authorization': scope.token
+                    },
                     json: true
                 });
                 throw 'should not succeed';

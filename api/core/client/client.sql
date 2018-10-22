@@ -48,6 +48,45 @@ $$
 LANGUAGE plpgsql;
 
 
+SELECT DeleteFunctions('BoneareAdm', 'ClientFindAutocomplete');
+CREATE OR REPLACE FUNCTION BoneareAdm.ClientFindAutocomplete(
+    pFilter VARCHAR(200),
+    pUnless INTEGER []
+)
+    RETURNS TABLE(
+        "id"   BoneareAdm.Client.id%TYPE,
+        "name" BoneareAdm.Client.name%TYPE
+    ) AS $$
+
+/*
+Documentation
+Source file.......: client.sql
+Description.......: Find clients for autocomplete
+Author............: Ítalo Andrade
+Date..............: 22/10/2018
+Ex................:
+
+SELECT * FROM BoneareAdm.ClientFindAutocomplete(null, '{3}');
+
+*/
+
+BEGIN
+    RETURN QUERY
+    SELECT c.id, c.name
+    FROM BoneareAdm.Client c
+    WHERE CASE
+              WHEN pFilter IS NOT NULL
+                    THEN public.unaccent(c.name) ILIKE '%' || public.unaccent(pFilter) || '%' OR
+                         c.id :: TEXT = pFilter
+              ELSE TRUE END
+      AND (pUnless IS NULL OR c.id != ALL (pUnless))
+    ORDER BY c.name
+    LIMIT 7;
+END;
+$$
+LANGUAGE plpgsql;
+
+
 SELECT DeleteFunctions('BoneareAdm', 'ClientFindById');
 CREATE OR REPLACE FUNCTION BoneareAdm.ClientFindById(
     pId BoneareAdm.Client.id%TYPE
@@ -96,7 +135,8 @@ CREATE OR REPLACE FUNCTION BoneareAdm.ClientAdd(
     pUserIdAction BoneareAdm.User.id%TYPE,
     pName         BoneareAdm.Client.name%TYPE,
     pDocument     BoneareAdm.Client.document%TYPE,
-    pDescription  BoneareAdm.Client.description%TYPE
+    pDescription  BoneareAdm.Client.description%TYPE,
+    pAddress      JSONB
 )
     RETURNS JSON AS $$
 
@@ -137,6 +177,19 @@ BEGIN
         RETURNING id
             INTO vId;
 
+    IF pAddress IS NOT NULL
+    THEN
+        INSERT INTO BoneareAdm.Client_Address (client_id, zip_code, street, number, complement, district, city, state)
+        VALUES (vId,
+                pAddress ->> 'zipCode',
+                pAddress ->> 'street',
+                pAddress ->> 'number',
+                pAddress ->> 'complement',
+                pAddress ->> 'district',
+                pAddress ->> 'city',
+                pAddress ->> 'state');
+    END IF;
+
     RETURN
     json_build_object(
         'code', 0,
@@ -160,7 +213,8 @@ CREATE OR REPLACE FUNCTION BoneareAdm.ClientUpdate(
     pId           BoneareAdm.Client.id%TYPE,
     pName         BoneareAdm.Client.name%TYPE,
     pDocument     BoneareAdm.Client.document%TYPE,
-    pDescription  BoneareAdm.Client.description%TYPE
+    pDescription  BoneareAdm.Client.description%TYPE,
+    pAddress      JSONB
 )
     RETURNS JSON AS $$
 
@@ -177,7 +231,8 @@ SELECT * FROM BoneareAdm.ClientUpdate(
    12,              -- pId
    'Client Test',   -- pName
    '45338491800'    -- pDocument,
-   null             -- pDescription
+   null             -- pDescription,
+   null             -- pAddress
 );
 
 */
@@ -213,6 +268,29 @@ BEGIN
         last_updated_by  = pUserIdAction,
         last_update_date = CURRENT_TIMESTAMP
     WHERE id = pId;
+
+    IF EXISTS(SELECT 1 FROM BoneareAdm.Client_Address WHERE client_id = pId)
+    THEN
+        UPDATE BoneareAdm.Client_Address
+        SET zip_code   = pAddress ->> 'zipCode',
+            street     = pAddress ->> 'street',
+            number     = pAddress ->> 'number',
+            complement = pAddress ->> 'complement',
+            district   = pAddress ->> 'district',
+            city       = pAddress ->> 'city',
+            state      = pAddress ->> 'state'
+        WHERE client_id = pId;
+    ELSE
+        INSERT INTO BoneareAdm.Client_Address (client_id, zip_code, street, number, complement, district, city, state)
+        VALUES (pId,
+                pAddress ->> 'zipCode',
+                pAddress ->> 'street',
+                pAddress ->> 'number',
+                pAddress ->> 'complement',
+                pAddress ->> 'district',
+                pAddress ->> 'city',
+                pAddress ->> 'state');
+    END IF;
 
     RETURN
     json_build_object(

@@ -3,10 +3,10 @@ const db = global.db;
 module.exports = {
     findAll,
     findById,
-    findAutocomplete: require('./client.mock').findAutocomplete,
+    findAutocomplete,
     add,
-    update: require('./client.mock').update,
-    remove: require('./client.mock').remove
+    update,
+    remove
 };
 
 async function findAll(params) {
@@ -16,6 +16,13 @@ async function findAll(params) {
         params.sortOrder,
         params.pageNumber,
         params.pageSize
+    ]);
+}
+
+async function findAutocomplete(params) {
+    return await db.func('BoneareAdm.ClientFindAutocomplete', [
+        params.filter,
+        params.unless
     ]);
 }
 
@@ -30,6 +37,24 @@ async function add(params) {
         params.userIdAction,
         params.name,
         params.document,
-        params.description
+        params.description,
+        params.address
+    ]);
+}
+
+async function update(params) {
+    return await db.json('BoneareAdm.ClientUpdate', [
+        params.userIdAction,
+        params.id,
+        params.name,
+        params.document,
+        params.description,
+        params.address
+    ]);
+}
+
+async function remove(params) {
+    return await db.json('BoneareAdm.ClientRemove', [
+        params.id
     ]);
 }

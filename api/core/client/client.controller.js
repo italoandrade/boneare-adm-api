@@ -47,6 +47,7 @@ async function findAutocomplete(req, res) {
 
 async function add(req, res) {
     const params = {
+        userIdAction: req.user.id,
         name: req.body.name,
         document: req.body.document,
         description: req.body.description,
@@ -60,12 +61,13 @@ async function add(req, res) {
     res.finish({
         code: 0,
         message: 'Cliente adicionado',
-        returning: data
+        return: data
     })
 }
 
 async function update(req, res) {
     const params = {
+        userIdAction: req.user.id,
         id: req.params.id,
         name: req.body.name,
         document: req.body.document,
