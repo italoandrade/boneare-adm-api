@@ -55,7 +55,6 @@ describe('Client', () => {
                     },
                     json: true
                 });
-                console.log(res);
                 res.should.be.an('object');
                 res.should.have.property('return');
                 res.return.should.be.an('object');
