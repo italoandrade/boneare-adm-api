@@ -47,8 +47,9 @@ async function findAutocomplete(req, res) {
 
 async function add(req, res) {
     const params = {
+        userIdAction: req.user.id,
         name: req.body.name,
-        unitWeight: req.body.unitWeight,
+        weight: req.body.weight,
         price: req.body.price
     };
 
@@ -57,15 +58,16 @@ async function add(req, res) {
     res.finish({
         code: 0,
         message: 'Produto adicionado',
-        returning: data
+        return: data
     })
 }
 
 async function update(req, res) {
     const params = {
+        userIdAction: req.user.id,
         id: req.params.id,
         name: req.body.name,
-        unitWeight: req.body.unitWeight,
+        weight: req.body.weight,
         price: req.body.price
     };
 

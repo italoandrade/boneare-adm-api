@@ -4,9 +4,11 @@ const
 
 require('chai').should();
 
-let scope = {};
+let scope = {
+    token: global.scope && global.scope.token || "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTQwMjM5Mjg0fQ.Bwa2P7EovI2zGsq8-ftftLo0QD_9_xhZN3N85DZSnsQ"
+};
 
-describe('Order', () => {
+describe('Product', () => {
     describe('GET - Find all', () => {
         it('should return a list of products', async () => {
             const res = await request({
@@ -15,6 +17,9 @@ describe('Order', () => {
                 qs: {
                     pageNumber: 0,
                     pageSize: 10
+                },
+                headers: {
+                    'Authorization': scope.token
                 },
                 json: true
             });
@@ -26,6 +31,9 @@ describe('Order', () => {
             const res = await request({
                 method: 'post',
                 uri: `${config.url}/clients/autocomplete`,
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
             res.should.be.an('array');
@@ -35,17 +43,22 @@ describe('Order', () => {
         it('should return an ID from the added product', async () => {
             const res = await request({
                 method: 'post',
-                uri: `${config.url}/products`,
+                uri: `${config.url}/product`,
                 body: {
                     name: 'Test',
-                    unitWeight: 1,
+                    weight: 1,
                     price: 7
+                },
+                headers: {
+                    'Authorization': scope.token
                 },
                 json: true
             });
             res.should.be.an('object');
-            res.id.should.be.an('number');
-            scope.idToUpdate = res.id;
+            res.should.have.property('return');
+            res.return.should.be.an('object');
+            res.return.should.have.property('id').which.is.an('number');
+            scope.idToUpdate = res.return.id;
         });
     });
     describe('GET - Find by ID', () => {
@@ -53,6 +66,9 @@ describe('Order', () => {
             const res = await request({
                 method: 'get',
                 uri: `${config.url}/product/${scope.idToUpdate}`,
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
             res.should.be.an('object');
@@ -62,6 +78,9 @@ describe('Order', () => {
                 await request({
                     method: 'get',
                     uri: `${config.url}/product/0`,
+                    headers: {
+                        'Authorization': scope.token
+                    },
                     json: true
                 });
                 throw 'should not succeed';
@@ -79,8 +98,11 @@ describe('Order', () => {
                 uri: `${config.url}/product/${scope.idToUpdate}`,
                 body: {
                     name: 'Test updated',
-                    unitWeight: 1,
+                    weight: 1,
                     price: 7
+                },
+                headers: {
+                    'Authorization': scope.token
                 },
                 json: true
             });
@@ -91,6 +113,9 @@ describe('Order', () => {
             await request({
                 method: 'delete',
                 uri: `${config.url}/product/${scope.idToUpdate}`,
+                headers: {
+                    'Authorization': scope.token
+                },
                 json: true
             });
         });
@@ -99,6 +124,9 @@ describe('Order', () => {
                 await request({
                     method: 'delete',
                     uri: `${config.url}/product/${scope.idToUpdate}`,
+                    headers: {
+                        'Authorization': scope.token
+                    },
                     json: true
                 });
                 throw 'should not succeed';

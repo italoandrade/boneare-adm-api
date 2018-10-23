@@ -28,13 +28,26 @@ async function findAutocomplete(params) {
 }
 
 async function add(params) {
-    return await repository.add(params);
+    const data = await repository.add(params);
+    return data.return;
 }
 
 async function update(params) {
-    return await repository.update(params);
+    const data = await repository.update(params);
+    switch (data.code) {
+        case 1:
+            throw {httpCode: 404, ...data};
+        case 2:
+            throw {httpCode: 409, ...data};
+    }
 }
 
 async function remove(params) {
-    return await repository.remove(params);
+    const data = await repository.remove(params);
+    switch (data.code) {
+        case 1:
+            throw {httpCode: 404, ...data};
+        case 2:
+            throw {httpCode: 409, ...data};
+    }
 }
