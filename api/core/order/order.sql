@@ -75,13 +75,12 @@ CREATE OR REPLACE FUNCTION BoneareAdm.OrderFindById(
     pId BoneareAdm.Order.id%TYPE
 )
     RETURNS TABLE(
-        "id"          BoneareAdm.Order.id%TYPE,
-        "description" BoneareAdm.Order.description%TYPE,
-        "document"    BoneareAdm.Order.document%TYPE,
-        "description" BoneareAdm.Order.description%TYPE,
-        "address"     JSONB,
-        "phones"      JSONB,
-        "emails"      JSONB
+        "id"           BoneareAdm.Order.id%TYPE,
+        "description"  BoneareAdm.Order.description%TYPE,
+        "clientId"     BoneareAdm.Client.id%TYPE,
+        "client"       JSONB,
+        "products"     JSONB,
+        "transactions" JSONB
     ) AS $$
 
 /*
@@ -98,24 +97,18 @@ SELECT * FROM BoneareAdm.OrderFindById(32);
 
 BEGIN
     RETURN QUERY
-    SELECT c.id,
-           c.name,
-           c.description,
-           c.document,
+    SELECT o.id,
+           o.description,
+           o.client_id,
            jsonb_build_object(
-               'zipCode', ca.zip_code,
-               'street', ca.street,
-               'number', ca.number,
-               'complement', ca.complement,
-               'district', ca.district,
-               'city', ca.city,
-               'state', ca.state
+               'id', c.id,
+               'name', c.name
                )                                                                                         address,
            (SELECT COALESCE(jsonb_agg(cp), '[]') FROM BoneareAdm.Order_Phone cp WHERE cp.order_id = pId) phones,
            (SELECT COALESCE(jsonb_agg(ce), '[]') FROM BoneareAdm.Order_Email ce WHERE ce.order_id = pId) emails
-    FROM BoneareAdm.Order c
-             LEFT JOIN BoneareAdm.Order_Address ca ON ca.order_id = c.id
-    WHERE c.id = pId;
+    FROM BoneareAdm.Order o
+             LEFT JOIN BoneareAdm.Client c ON c.id = o.client_id
+    WHERE o.id = pId;
 END;
 $$
 LANGUAGE plpgsql;
