@@ -11,7 +11,7 @@ const config = {
         port: process.env.PGPORT || 5432,
         database: process.env.PGDATABASE || 'boneareadm',
         user: process.env.PGUSER || 'italo',
-        password: process.env.PGPASSWORD || 'Aspr1ll4**',
+        password: process.env.PGPASSWORD || '123',
     },
     hash: process.env.HASH || 'xirofompila'
 };
