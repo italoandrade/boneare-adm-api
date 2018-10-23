@@ -16,7 +16,7 @@ module.exports = {
     },
     add: {
         type: 'post',
-        path: '/orders',
+        path: '/order',
         method: controller.add,
         public: false
     },

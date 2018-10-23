@@ -22,7 +22,7 @@ module.exports = {
     },
     add: {
         type: 'post',
-        path: '/products',
+        path: '/product',
         method: controller.add,
         public: false
     },
