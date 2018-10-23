@@ -8,7 +8,7 @@ let DATA = [
     {id: 7, name: 'Cliente teste 7', lineCount: 10},
     {id: 8, name: 'Cliente teste 8', lineCount: 10},
     {id: 9, name: 'Cliente teste 9', lineCount: 10},
-    {id: 10, name: 'Cliente teste 10', lineCount: 10},
+    {id: 10, name: 'Cliente teste 10', lineCount: 10}
 ];
 
 module.exports = {

@@ -42,6 +42,8 @@ BEGIN
              (iif(pSortColumn = 'id' AND pSortOrder = 'desc', c.id, NULL)) DESC,
              (iif(pSortColumn = 'name' AND pSortOrder = 'asc', c.name, NULL)) ASC,
              (iif(pSortColumn = 'name' AND pSortOrder = 'desc', c.name, NULL)) DESC,
+             (iif(pSortColumn = 'document' AND pSortOrder = 'asc', c.document, NULL)) ASC,
+             (iif(pSortColumn = 'document' AND pSortOrder = 'desc', c.document, NULL)) DESC,
              (COALESCE(c.last_update_date, c.creation_date)) DESC
     LIMIT iif(pPageSize > 0 AND pPageNumber >= 0, pPageSize, NULL)
     OFFSET iif(pPageSize > 0 AND pPageNumber >= 0, pPageNumber * pPageSize, NULL);
@@ -78,7 +80,8 @@ BEGIN
     FROM BoneareAdm.Client c
     WHERE CASE
               WHEN pFilter IS NOT NULL
-                    THEN public.unaccent(c.name) ILIKE '%' || public.unaccent(pFilter) || '%' OR
+                    THEN unaccent(c.name) ILIKE '%' || unaccent(pFilter) || '%' OR
+                         unaccent(c.document) ILIKE '%' || unaccent(pFilter) || '%' OR
                          c.id :: TEXT = pFilter
               ELSE TRUE END
       AND (pUnless IS NULL OR c.id != ALL (pUnless))
@@ -129,7 +132,7 @@ BEGIN
                'district', ca.district,
                'city', ca.city,
                'state', ca.state
-               )                                                                                    address,
+               )                                                                                           address,
            (SELECT COALESCE(jsonb_agg(cp), '[]') FROM BoneareAdm.Client_Phone cp WHERE cp.client_id = pId) phones,
            (SELECT COALESCE(jsonb_agg(ce), '[]') FROM BoneareAdm.Client_Email ce WHERE ce.client_id = pId) emails
     FROM BoneareAdm.Client c
@@ -163,8 +166,10 @@ Ex................:
 SELECT * FROM BoneareAdm.ClientAdd(
    1,               -- pUserIdAction
    'Client Test',   -- pName
-   '45338491800'    -- pDocument,
-   null             -- pDescription
+   '45338491800',   -- pDocument
+   null,            -- pDescription
+   null,            -- pPhones
+   null             -- pEmails
 );
 
 */
@@ -204,32 +209,18 @@ BEGIN
 
     IF pPhones IS NOT NULL
     THEN
-        INSERT INTO BoneareAdm.Client_Phone (
-            client_id,
-            number
-            )
-        SELECT
-               vId,
-               "number"
+        INSERT INTO BoneareAdm.Client_Phone (client_id, number)
+        SELECT vId, "number"
         FROM jsonb_to_recordset(pPhones)
-                 AS x(
-                     "number" BIGINT
-                 );
+                 AS x ("number" BIGINT);
     END IF;
 
     IF pEmails IS NOT NULL
     THEN
-        INSERT INTO BoneareAdm.Client_Email (
-            client_id,
-            email
-            )
-        SELECT
-               vId,
-               "email"
+        INSERT INTO BoneareAdm.Client_Email (client_id, email)
+        SELECT vId, "email"
         FROM jsonb_to_recordset(pEmails)
-                 AS x(
-                     "email" TEXT
-                 );
+                 AS x ("email" TEXT);
     END IF;
 
     RETURN
@@ -274,9 +265,10 @@ SELECT * FROM BoneareAdm.ClientUpdate(
    1,               -- pUserIdAction
    12,              -- pId
    'Client Test',   -- pName
-   '45338491800'    -- pDocument,
-   null             -- pDescription,
-   null             -- pAddress
+   '45338491800',   -- pDocument
+   null,            -- pDescription
+   null,            -- pPhones
+   null             -- pEmails
 );
 
 */
@@ -309,7 +301,7 @@ BEGIN
     SET name             = pName,
         document         = pDocument,
         description      = pDescription,
-        last_updated_by  = pUserIdAction,
+        last_update_by   = pUserIdAction,
         last_update_date = CURRENT_TIMESTAMP
     WHERE id = pId;
 
@@ -338,86 +330,48 @@ BEGIN
 
     IF pPhones IS NOT NULL
     THEN
-        DELETE FROM BoneareAdm.Client_Phone
+        DELETE
+        FROM BoneareAdm.Client_Phone
         WHERE client_id = pId
-          AND id NOT IN (SELECT "id"
-                         FROM jsonb_to_recordset(pPhones)
-                                  AS x(
-                                      "id" INTEGER
-                                  )
-                         WHERE "id" IS NOT NULL);
+          AND id NOT IN (SELECT "id" FROM jsonb_to_recordset(pPhones)
+                                              AS x ("id" INTEGER) WHERE "id" IS NOT NULL);
 
-        INSERT INTO BoneareAdm.Client_Phone (
-            client_id,
-            number
-            )
-        SELECT
-               pId,
-               "number"
+        INSERT INTO BoneareAdm.Client_Phone (client_id, number)
+        SELECT pId, "number"
         FROM jsonb_to_recordset(pPhones)
-                 AS x(
-                     "id" TEXT,
-                     "number" BIGINT
-                 )
+                 AS x ("id" TEXT, "number" BIGINT)
         WHERE "id" IS NULL;
 
         UPDATE BoneareAdm.Client_Phone
-        SET number       = cp."number"
-        FROM
-             (
-             SELECT
-                    "id",
-                    "number"
-             FROM jsonb_to_recordset(pPhones)
-                      AS x(
-                          "id" INTEGER,
-                          "number" BIGINT
-                      )
-             WHERE "id" IS NOT NULL
-             ) cp
+        SET number = cp."number"
+        FROM (SELECT "id", "number"
+              FROM jsonb_to_recordset(pPhones)
+                       AS x ("id" INTEGER, "number" BIGINT)
+              WHERE "id" IS NOT NULL) cp
         WHERE client_id = pId
           AND BoneareAdm.Client_Phone.id = cp."id";
     END IF;
 
     IF pEmails IS NOT NULL
     THEN
-        DELETE FROM BoneareAdm.Client_Email
+        DELETE
+        FROM BoneareAdm.Client_Email
         WHERE client_id = pId
-          AND id NOT IN (SELECT "id"
-                         FROM jsonb_to_recordset(pEmails)
-                                  AS x(
-                                      "id" INTEGER
-                                  )
-                         WHERE "id" IS NOT NULL);
+          AND id NOT IN (SELECT "id" FROM jsonb_to_recordset(pEmails)
+                                              AS x ("id" INTEGER) WHERE "id" IS NOT NULL);
 
-        INSERT INTO BoneareAdm.Client_Email (
-            client_id,
-            email
-            )
-        SELECT
-               pId,
-               "email"
+        INSERT INTO BoneareAdm.Client_Email (client_id, email)
+        SELECT pId, "email"
         FROM jsonb_to_recordset(pEmails)
-                 AS x(
-                     "id" INTEGER,
-                     "email" TEXT
-                 )
+                 AS x ("id" INTEGER, "email" TEXT)
         WHERE "id" IS NULL;
 
         UPDATE BoneareAdm.Client_Email
-        SET email       = ce."email"
-        FROM
-             (
-             SELECT
-                    "id",
-                    "email"
-             FROM jsonb_to_recordset(pEmails)
-                      AS x(
-                          "id" INTEGER,
-                          "email" TEXT
-                      )
-             WHERE "id" IS NOT NULL
-             ) ce
+        SET email = ce."email"
+        FROM (SELECT "id", "email"
+              FROM jsonb_to_recordset(pEmails)
+                       AS x ("id" INTEGER, "email" TEXT)
+              WHERE "id" IS NOT NULL) ce
         WHERE client_id = pId
           AND BoneareAdm.Client_Email.id = ce."id";
     END IF;
@@ -476,7 +430,7 @@ BEGIN
     IF vNewRelation IS NOT NULL
     THEN
         vRelations = vRelations || jsonb_build_object(
-            'relation', 'Pedido ' || (vNewRelation ->> 'description'),
+            'relation', 'Pedido ' || COALESCE(vNewRelation ->> 'description', vNewRelation ->> 'id'),
             'url', '/order/' || (vNewRelation ->> 'id')
         );
     END IF;

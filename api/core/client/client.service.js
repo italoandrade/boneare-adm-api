@@ -40,6 +40,8 @@ async function update(params) {
     const data = await repository.update(params);
     switch (data.code) {
         case 1:
+            throw {httpCode: 404, ...data};
+        case 2:
             throw {httpCode: 409, ...data};
     }
 }

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,186" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,288" last-zoom="1"
 	 default-schema="boneareadm" default-owner="italo">
 <role name="italo"
       superuser="true"
@@ -95,7 +95,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="creation_date" not-null="true" default-value="now()">
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
-	<column name="last_updated_by">
+	<column name="last_update_by">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="last_update_date">
@@ -132,10 +132,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="creation_date" not-null="true" default-value="now()">
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
-	<column name="last_updated_by">
+	<column name="last_update_by">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="last_updated_date">
+	<column name="last_update_date">
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
 	<constraint name="product_pk" type="pk-constr" table="boneareadm.product">
@@ -207,7 +207,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="creation_date" not-null="true" default-value="now()">
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
-	<column name="last_updated_by">
+	<column name="last_update_by">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="last_update_date">
@@ -256,7 +256,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="creation_date" not-null="true" default-value="now()">
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
-	<column name="last_updated_by">
+	<column name="last_update_by">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="last_update_date">
@@ -324,7 +324,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="creation_date" not-null="true" default-value="now()">
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
-	<column name="last_updated_by">
+	<column name="last_update_by">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="last_update_date">
@@ -479,7 +479,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <constraint name="client_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.client">
-	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="last_update_by" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -491,7 +491,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <constraint name="product_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.product">
-	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="last_update_by" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -515,7 +515,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <constraint name="order_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.&quot;order&quot;">
-	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="last_update_by" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -539,7 +539,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <constraint name="order_product_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.order_product">
-	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="last_update_by" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -563,7 +563,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <constraint name="order_transaction_last_updated_by_user_id_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="boneareadm.&quot;user&quot;" table="boneareadm.order_transaction">
-	<columns names="last_updated_by" ref-type="src-columns"/>
+	<columns names="last_update_by" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 

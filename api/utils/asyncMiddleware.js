@@ -22,7 +22,8 @@ module.exports = (fn, isPublic) =>
                 const code = err.code;
                 res.error = err;
                 const debugError = config.debug && err.err ? err.err.toString() : undefined;
-                res.status(httpCode).send({message, code, debugError});
+                const relations = err.relations ? err.relations : undefined;
+                res.status(httpCode).send({message, code, relations, debugError});
                 next()
             })
     };
