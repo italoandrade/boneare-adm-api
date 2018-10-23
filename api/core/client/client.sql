@@ -12,7 +12,8 @@ CREATE OR REPLACE FUNCTION BoneareAdm.ClientFindAll(
     RETURNS TABLE(
         "lineCount" BIGINT,
         "id"        BoneareAdm.Client.id%TYPE,
-        "name"      BoneareAdm.Client.name%TYPE
+        "name"      BoneareAdm.Client.name%TYPE,
+        "document"  BoneareAdm.Client.document%TYPE
     ) AS $$
 
 /*
@@ -29,11 +30,12 @@ SELECT * FROM BoneareAdm.ClientFindAll(null, null, null, 1, 10);
 
 BEGIN
     RETURN QUERY
-    SELECT COUNT(1) OVER (PARTITION BY 1) lineCount, c.id, c.name
+    SELECT COUNT(1) OVER (PARTITION BY 1) lineCount, c.id, c.name, c.document
     FROM BoneareAdm.Client c
     WHERE CASE
               WHEN pFilter IS NOT NULL
                     THEN unaccent(c.name) ILIKE '%' || unaccent(pFilter) || '%' OR
+                         unaccent(c.document) ILIKE '%' || unaccent(pFilter) || '%' OR
                          c.id :: TEXT = pFilter
               ELSE TRUE END
     ORDER BY (iif(pSortColumn = 'id' AND pSortOrder = 'asc', c.id, NULL)) ASC,
@@ -96,7 +98,9 @@ CREATE OR REPLACE FUNCTION BoneareAdm.ClientFindById(
         "name"        BoneareAdm.Client.name%TYPE,
         "document"    BoneareAdm.Client.document%TYPE,
         "description" BoneareAdm.Client.description%TYPE,
-        "address"     JSONB
+        "address"     JSONB,
+        "phones"      JSONB,
+        "emails"      JSONB
     ) AS $$
 
 /*
@@ -107,21 +111,27 @@ Author............: Ítalo Andrade
 Date..............: 22/10/2018
 Ex................:
 
-SELECT * FROM BoneareAdm.ClientFindById(1);
+SELECT * FROM BoneareAdm.ClientFindById(32);
 
 */
 
 BEGIN
     RETURN QUERY
-    SELECT c.id, c.name, c.description, c.document, jsonb_build_object(
-                                                        'zipCode', ca.zip_code,
-                                                        'street', ca.street,
-                                                        'number', ca.number,
-                                                        'complement', ca.complement,
-                                                        'district', ca.district,
-                                                        'city', ca.city,
-                                                        'state', ca.state
-        )
+    SELECT c.id,
+           c.name,
+           c.description,
+           c.document,
+           jsonb_build_object(
+               'zipCode', ca.zip_code,
+               'street', ca.street,
+               'number', ca.number,
+               'complement', ca.complement,
+               'district', ca.district,
+               'city', ca.city,
+               'state', ca.state
+               )                                                                                    address,
+           (SELECT COALESCE(jsonb_agg(cp), '[]') FROM BoneareAdm.Client_Phone cp WHERE cp.client_id = pId) phones,
+           (SELECT COALESCE(jsonb_agg(ce), '[]') FROM BoneareAdm.Client_Email ce WHERE ce.client_id = pId) emails
     FROM BoneareAdm.Client c
              LEFT JOIN BoneareAdm.Client_Address ca ON ca.client_id = c.id
     WHERE c.id = pId;
@@ -136,9 +146,11 @@ CREATE OR REPLACE FUNCTION BoneareAdm.ClientAdd(
     pName         BoneareAdm.Client.name%TYPE,
     pDocument     BoneareAdm.Client.document%TYPE,
     pDescription  BoneareAdm.Client.description%TYPE,
-    pAddress      JSONB
+    pAddress      JSONB,
+    pPhones       JSONB,
+    pEmails       JSONB
 )
-    RETURNS JSON AS $$
+    RETURNS JSONB AS $$
 
 /*
 Documentation
@@ -166,7 +178,7 @@ BEGIN
     IF EXISTS(SELECT 1 FROM BoneareAdm.Client c WHERE c.document = pDocument)
     THEN
         RETURN
-        json_build_object(
+        jsonb_build_object(
             'code', 1,
             'message', 'Documento existente'
         );
@@ -190,10 +202,40 @@ BEGIN
                 pAddress ->> 'state');
     END IF;
 
+    IF pPhones IS NOT NULL
+    THEN
+        INSERT INTO BoneareAdm.Client_Phone (
+            client_id,
+            number
+            )
+        SELECT
+               vId,
+               "number"
+        FROM jsonb_to_recordset(pPhones)
+                 AS x(
+                     "number" BIGINT
+                 );
+    END IF;
+
+    IF pEmails IS NOT NULL
+    THEN
+        INSERT INTO BoneareAdm.Client_Email (
+            client_id,
+            email
+            )
+        SELECT
+               vId,
+               "email"
+        FROM jsonb_to_recordset(pEmails)
+                 AS x(
+                     "email" TEXT
+                 );
+    END IF;
+
     RETURN
-    json_build_object(
+    jsonb_build_object(
         'code', 0,
-        'return', json_build_object(
+        'return', jsonb_build_object(
             'id', vId
         )
     );
@@ -214,9 +256,11 @@ CREATE OR REPLACE FUNCTION BoneareAdm.ClientUpdate(
     pName         BoneareAdm.Client.name%TYPE,
     pDocument     BoneareAdm.Client.document%TYPE,
     pDescription  BoneareAdm.Client.description%TYPE,
-    pAddress      JSONB
+    pAddress      JSONB,
+    pPhones       JSONB,
+    pEmails       JSONB
 )
-    RETURNS JSON AS $$
+    RETURNS JSONB AS $$
 
 /*
 Documentation
@@ -245,7 +289,7 @@ BEGIN
     IF NOT EXISTS(SELECT 1 FROM BoneareAdm.Client c WHERE c.id = pId)
     THEN
         RETURN
-        json_build_object(
+        jsonb_build_object(
             'code', 1,
             'message', 'Cliente não encontrado'
         );
@@ -255,7 +299,7 @@ BEGIN
                                                   AND c.id <> pId)
     THEN
         RETURN
-        json_build_object(
+        jsonb_build_object(
             'code', 2,
             'message', 'Documento existente'
         );
@@ -292,8 +336,94 @@ BEGIN
                 pAddress ->> 'state');
     END IF;
 
+    IF pPhones IS NOT NULL
+    THEN
+        DELETE FROM BoneareAdm.Client_Phone
+        WHERE client_id = pId
+          AND id NOT IN (SELECT "id"
+                         FROM jsonb_to_recordset(pPhones)
+                                  AS x(
+                                      "id" INTEGER
+                                  )
+                         WHERE "id" IS NOT NULL);
+
+        INSERT INTO BoneareAdm.Client_Phone (
+            client_id,
+            number
+            )
+        SELECT
+               pId,
+               "number"
+        FROM jsonb_to_recordset(pPhones)
+                 AS x(
+                     "id" TEXT,
+                     "number" BIGINT
+                 )
+        WHERE "id" IS NULL;
+
+        UPDATE BoneareAdm.Client_Phone
+        SET number       = cp."number"
+        FROM
+             (
+             SELECT
+                    "id",
+                    "number"
+             FROM jsonb_to_recordset(pPhones)
+                      AS x(
+                          "id" INTEGER,
+                          "number" BIGINT
+                      )
+             WHERE "id" IS NOT NULL
+             ) cp
+        WHERE client_id = pId
+          AND BoneareAdm.Client_Phone.id = cp."id";
+    END IF;
+
+    IF pEmails IS NOT NULL
+    THEN
+        DELETE FROM BoneareAdm.Client_Email
+        WHERE client_id = pId
+          AND id NOT IN (SELECT "id"
+                         FROM jsonb_to_recordset(pEmails)
+                                  AS x(
+                                      "id" INTEGER
+                                  )
+                         WHERE "id" IS NOT NULL);
+
+        INSERT INTO BoneareAdm.Client_Email (
+            client_id,
+            email
+            )
+        SELECT
+               pId,
+               "email"
+        FROM jsonb_to_recordset(pEmails)
+                 AS x(
+                     "id" INTEGER,
+                     "email" TEXT
+                 )
+        WHERE "id" IS NULL;
+
+        UPDATE BoneareAdm.Client_Email
+        SET email       = ce."email"
+        FROM
+             (
+             SELECT
+                    "id",
+                    "email"
+             FROM jsonb_to_recordset(pEmails)
+                      AS x(
+                          "id" INTEGER,
+                          "email" TEXT
+                      )
+             WHERE "id" IS NOT NULL
+             ) ce
+        WHERE client_id = pId
+          AND BoneareAdm.Client_Email.id = ce."id";
+    END IF;
+
     RETURN
-    json_build_object(
+    jsonb_build_object(
         'code', 0
     );
     EXCEPTION WHEN OTHERS
@@ -362,6 +492,8 @@ BEGIN
     END IF;
 
     DELETE FROM BoneareAdm.Client_Address WHERE client_id = pId;
+    DELETE FROM BoneareAdm.Client_Phone WHERE client_id = pId;
+    DELETE FROM BoneareAdm.Client_Email WHERE client_id = pId;
     DELETE FROM BoneareAdm.Client WHERE id = pId;
 
     RETURN

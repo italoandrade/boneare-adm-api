@@ -45,7 +45,7 @@ describe('Client', () => {
             try {
                 const res = await request({
                     method: 'post',
-                    uri: `${config.url}/clients`,
+                    uri: `${config.url}/client`,
                     body: {
                         name: 'Test',
                         document: scope.document
@@ -68,7 +68,7 @@ describe('Client', () => {
             try {
                 await request({
                     method: 'post',
-                    uri: `${config.url}/clients`,
+                    uri: `${config.url}/client`,
                     body: {
                         name: 'Test',
                         document: scope.document

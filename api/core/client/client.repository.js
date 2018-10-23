@@ -38,7 +38,9 @@ async function add(params) {
         params.name,
         params.document,
         params.description,
-        params.address
+        params.address,
+        JSON.stringify(params.phones),
+        JSON.stringify(params.emails)
     ]);
 }
 
@@ -49,7 +51,9 @@ async function update(params) {
         params.name,
         params.document,
         params.description,
-        params.address
+        params.address,
+        JSON.stringify(params.phones),
+        JSON.stringify(params.emails)
     ]);
 }
 
