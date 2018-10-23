@@ -2,10 +2,10 @@ const db = global.db;
 
 module.exports = {
     findAll,
-    findById: require('./order.mock').findById,
-    add: require('./order.mock').add,
-    update: require('./order.mock').update,
-    remove: require('./order.mock').remove
+    findById,
+    add,
+    update,
+    remove
 };
 
 async function findAll(params) {
@@ -15,5 +15,38 @@ async function findAll(params) {
         params.sortOrder,
         params.pageNumber,
         params.pageSize
+    ]);
+}
+
+async function findById(params) {
+    return (await db.func('BoneareAdm.OrderFindById', [
+        params.id
+    ]))[0];
+}
+
+async function add(params) {
+    return await db.json('BoneareAdm.OrderAdd', [
+        params.userIdAction,
+        params.name,
+        params.client,
+        JSON.stringify(params.products),
+        JSON.stringify(params.transactions)
+    ]);
+}
+
+async function update(params) {
+    return await db.json('BoneareAdm.OrderUpdate', [
+        params.userIdAction,
+        params.id,
+        params.name,
+        params.client,
+        JSON.stringify(params.products),
+        JSON.stringify(params.transactions)
+    ]);
+}
+
+async function remove(params) {
+    return await db.json('BoneareAdm.OrderRemove', [
+        params.id
     ]);
 }

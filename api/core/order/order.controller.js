@@ -35,9 +35,11 @@ async function findById(req, res) {
 
 async function add(req, res) {
     const params = {
+        userIdAction: req.user.id,
         description: req.body.description,
-        unitWeight: req.body.unitWeight,
-        price: req.body.price
+        client: req.body.client,
+        products: req.body.products,
+        transactions: req.body.transactions
     };
 
     const data = await service.add(params);
@@ -45,16 +47,18 @@ async function add(req, res) {
     res.finish({
         code: 0,
         message: 'Pedido adicionado',
-        returning: data
+        return: data
     })
 }
 
 async function update(req, res) {
     const params = {
+        userIdAction: req.user.id,
         id: req.params.id,
         description: req.body.description,
-        unitWeight: req.body.unitWeight,
-        price: req.body.price
+        client: req.body.client,
+        products: req.body.products,
+        transactions: req.body.transactions
     };
 
     await service.update(params);
