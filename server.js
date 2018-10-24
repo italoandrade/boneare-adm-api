@@ -4,11 +4,10 @@ const
     cors = require('cors'),
     app = express(),
     config = require('./api/config'),
-    log = require('./api/utils/logHelper'),
-    db = require('./api/infra/db/db');
+    log = require('./api/utils/logHelper');
 
 module.exports = async () => {
-    global.db = db;
+    global.db = require('./api/infra/db/db');
 
     app.use(bodyParser.json());
     app.use(cors({
