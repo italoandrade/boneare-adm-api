@@ -4,13 +4,13 @@ const
     cors = require('cors'),
     app = express(),
     config = require('./api/config'),
-    log = require('./api/utils/logHelper'),
-    db = require('./api/infra/db/db');
+    log = require('./api/utils/logHelper');
 
 module.exports = async () => {
-    global.db = db;
+    global.db = require('./api/infra/db/db');
+    global.s3 = require('./api/infra/s3/s3');
 
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({limit: '10mb'}));
     app.use(cors({
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization']
