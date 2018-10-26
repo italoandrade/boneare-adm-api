@@ -8,7 +8,7 @@ const
 
 module.exports = async () => {
     global.db = require('./api/infra/db/db');
-    global.s3 = require('./api/infra/s3/s3');
+    // global.s3 = require('./api/infra/s3/s3');
 
     app.use(bodyParser.json({limit: '10mb'}));
     app.use(cors({
