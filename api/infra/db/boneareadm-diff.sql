@@ -1,6 +1,6 @@
 -- Diff code generated with pgModeler (PostgreSQL Database Modeler)
 -- pgModeler version: 0.9.2-alpha
--- Diff date: 2018-10-26 17:24:29
+-- Diff date: 2018-10-26 20:54:05
 -- Source model: boneareadm
 -- Database: boneareadm
 -- PostgreSQL version: 9.6
@@ -8,7 +8,7 @@
 -- [ Diff summary ]
 -- Dropped objects: 0
 -- Created objects: 0
--- Changed objects: 2
+-- Changed objects: 1
 -- Truncated tables: 0
 
 SET search_path=public,pg_catalog,boneareadm;
@@ -19,54 +19,58 @@ SET search_path=public,pg_catalog,boneareadm;
 ALTER ROLE italo
 	ENCRYPTED PASSWORD '123';
 -- ddl-end --
-ALTER TABLE boneareadm.order_transaction ALTER COLUMN date TYPE date;
--- ddl-end --
 
 
 -- [ Created permissions ] --
--- object: grant_95411eed89 | type: PERMISSION --
+-- object: grant_14661280e6 | type: PERMISSION --
+GRANT CREATE
+   ON DATABASE boneareadm
+   TO italo WITH GRANT OPTION;
+-- ddl-end --
+
+-- object: grant_208bd489b4 | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.product_id_seq
    TO italo;
 -- ddl-end --
 
--- object: grant_9b3043055b | type: PERMISSION --
+-- object: grant_9475f9eddb | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.client_phone_id_seq
    TO italo;
 -- ddl-end --
 
--- object: grant_aaff4d8c81 | type: PERMISSION --
+-- object: grant_c161421265 | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.order_product_id_seq
    TO italo;
 -- ddl-end --
 
--- object: grant_756f700fbd | type: PERMISSION --
+-- object: grant_74d8214fc5 | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.client_id_seq
    TO italo;
 -- ddl-end --
 
--- object: grant_0305c1d5d2 | type: PERMISSION --
+-- object: grant_1ff712beb2 | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.order_transaction_id_seq
    TO italo;
 -- ddl-end --
 
--- object: grant_337bf4937a | type: PERMISSION --
+-- object: grant_08cb5c2760 | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.order_id_seq
    TO italo;
 -- ddl-end --
 
--- object: grant_141530c39b | type: PERMISSION --
+-- object: grant_d0b0ae83ad | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.client_email_id_seq
    TO italo;
 -- ddl-end --
 
--- object: grant_549be1a700 | type: PERMISSION --
+-- object: grant_4829ded440 | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE boneareadm.user_id_seq
    TO italo;
