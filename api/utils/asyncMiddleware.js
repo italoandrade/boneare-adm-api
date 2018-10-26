@@ -37,6 +37,7 @@ async function auth(fn, isPublic, req, res, next) {
             throw {httpCode: 403, code: 1, message: 'Token inválido'}
         }
         req.user = tokenRead;
+        req.log.user = tokenRead;
     }
 
     await fn(req, res, next)
