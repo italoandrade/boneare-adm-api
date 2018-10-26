@@ -54,8 +54,10 @@ CREATE OR REPLACE FUNCTION BoneareAdm.ProductFindAutocomplete(
     pUnless INTEGER []
 )
     RETURNS TABLE(
-        "id"   BoneareAdm.Product.id%TYPE,
-        "name" BoneareAdm.Product.name%TYPE
+        "id"     BoneareAdm.Product.id%TYPE,
+        "name"   BoneareAdm.Product.name%TYPE,
+        "price"  BoneareAdm.Product.price%TYPE,
+        "weight" BoneareAdm.Product.weight%TYPE
     ) AS $$
 
 /*
@@ -72,7 +74,7 @@ SELECT * FROM BoneareAdm.ProductFindAutocomplete(null, '{3}');
 
 BEGIN
     RETURN QUERY
-    SELECT p.id, p.name
+    SELECT p.id, p.name, p.price, p.weight
     FROM BoneareAdm.Product p
     WHERE CASE
               WHEN pFilter IS NOT NULL
