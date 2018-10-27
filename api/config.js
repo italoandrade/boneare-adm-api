@@ -4,7 +4,7 @@ const config = {
     mock: process.env.MOCK === 'true',
     clusterCount: process.env.CLUSTER_COUNT || require('os').cpus().length,
     host: process.env.HOST || 'localhost',
-    port: process.env.PORT || 3000,
+    port: process.env.PORT || 3100,
     url: undefined,
     db: {
         host: process.env.PGHOST || 'localhost',
