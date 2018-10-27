@@ -24,10 +24,6 @@ async function findById(params) {
 
 async function add(params) {
     const data = await repository.add(params);
-    switch (data.code) {
-        case 1:
-            throw {httpCode: 409, ...data};
-    }
     return data.return;
 }
 
@@ -36,8 +32,6 @@ async function update(params) {
     switch (data.code) {
         case 1:
             throw {httpCode: 404, ...data};
-        case 2:
-            throw {httpCode: 409, ...data};
     }
 }
 

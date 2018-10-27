@@ -27,8 +27,9 @@ async function findById(params) {
 async function add(params) {
     return await db.json('BoneareAdm.OrderAdd', [
         params.userIdAction,
-        params.name,
-        params.client,
+        params.description,
+        params.date,
+        params.clientId,
         JSON.stringify(params.products),
         JSON.stringify(params.transactions)
     ]);
@@ -38,8 +39,9 @@ async function update(params) {
     return await db.json('BoneareAdm.OrderUpdate', [
         params.userIdAction,
         params.id,
-        params.name,
-        params.client,
+        params.description,
+        params.date,
+        params.clientId,
         JSON.stringify(params.products),
         JSON.stringify(params.transactions)
     ]);

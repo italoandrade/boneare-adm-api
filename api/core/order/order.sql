@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION BoneareAdm.OrderFindAll(
         "lineCount"      BIGINT,
         "id"             BoneareAdm.Order.id%TYPE,
         "description"    BoneareAdm.Order.description%TYPE,
+        "date"           BoneareAdm.Order.date%TYPE,
         "client"         BoneareAdm.Client.name%TYPE,
         "totalCost"      DECIMAL(10, 2),
         "totalPaid"      DECIMAL(10, 2),
@@ -40,13 +41,13 @@ DECLARE
     vTotalWeightAll DECIMAL(10, 2);
 
 BEGIN
-    SELECT SUM(op.quantity * p.price * iif(op.entry, -1, 1)) INTO vTotalCostAll
+    SELECT SUM(op.quantity * p.price * iif(op.entry, 0, 1)) INTO vTotalCostAll
     FROM BoneareAdm.Order_Product op
              INNER JOIN BoneareAdm.Product p ON p.id = op.product_id;
 
     SELECT SUM(ot.amount * iif(ot.type = 1, 1, -1)) INTO vTotalPaidAll FROM BoneareAdm.Order_Transaction ot;
 
-    SELECT SUM(op.quantity * p.weight * iif(op.entry, 1, -1)) INTO vTotalWeight All
+    SELECT SUM(op.quantity * p.weight * iif(op.entry, 1, -1)) INTO vTotalWeightAll
     FROM BoneareAdm.Order_Product op
              INNER JOIN BoneareAdm.Product p ON p.id = op.product_id;
 
@@ -54,6 +55,7 @@ BEGIN
     SELECT sq.lineCount,
            sq.id,
            sq.description,
+           sq.date,
            sq.client,
            sq.totalCost,
            sq.totalPaid,
@@ -64,8 +66,9 @@ BEGIN
     FROM (SELECT COUNT(1) OVER (PARTITION BY 1) lineCount,
                  o.id,
                  o.description,
+                 o.date,
                  c.name                         client,
-                 (SELECT SUM(op.quantity * p.price * iif(op.entry, -1, 1))
+                 (SELECT SUM(op.quantity * p.price * iif(op.entry, null, 1))
                   FROM BoneareAdm.Order_Product op
                            INNER JOIN BoneareAdm.Product p ON p.id = op.product_id
                   WHERE op.order_id = o.id)     totalCost,
@@ -91,6 +94,8 @@ BEGIN
              (iif(pSortColumn = 'id' AND pSortOrder = 'desc', sq.id, NULL)) DESC,
              (iif(pSortColumn = 'description' AND pSortOrder = 'asc', sq.description, NULL)) ASC,
              (iif(pSortColumn = 'description' AND pSortOrder = 'desc', sq.description, NULL)) DESC,
+             (iif(pSortColumn = 'date' AND pSortOrder = 'asc', sq.date, NULL)) ASC,
+             (iif(pSortColumn = 'date' AND pSortOrder = 'desc', sq.date, NULL)) DESC,
              (iif(pSortColumn = 'client' AND pSortOrder = 'asc', sq.client, NULL)) ASC,
              (iif(pSortColumn = 'client' AND pSortOrder = 'desc', sq.client, NULL)) DESC,
              (iif(pSortColumn = 'totalCost' AND pSortOrder = 'asc', sq.totalCost, NULL)) ASC,
@@ -112,6 +117,7 @@ CREATE OR REPLACE FUNCTION BoneareAdm.OrderFindById(
     RETURNS TABLE(
         "id"           BoneareAdm.Order.id%TYPE,
         "description"  BoneareAdm.Order.description%TYPE,
+        "date"         BoneareAdm.Order.date%TYPE,
         "clientId"     BoneareAdm.Client.id%TYPE,
         "client"       JSONB,
         "products"     JSONB,
@@ -135,7 +141,7 @@ DECLARE
     vTotalPaid DECIMAL(10, 2);
 
 BEGIN
-    SELECT SUM(op.quantity * p.price * iif(op.entry, -1, 1)) INTO vTotalCost
+    SELECT SUM(op.quantity * p.price * iif(op.entry, 0, 1)) INTO vTotalCost
     FROM BoneareAdm.Order_Product op
              INNER JOIN BoneareAdm.Product p ON p.id = op.product_id
     WHERE op.order_id = pId;
@@ -146,6 +152,7 @@ BEGIN
     RETURN QUERY
     SELECT o.id,
            o.description,
+           o.date,
            o.client_id,
            iif(c.id IS NOT NULL, jsonb_build_object(
                                      'id', c.id,
@@ -159,6 +166,7 @@ BEGIN
                          op.quantity,
                          op.entry,
                          p.price,
+                         p.weight,
                          vTotalCost    "totalCost"
                   FROM BoneareAdm.Order_Product op
                            INNER JOIN BoneareAdm.Product p ON p.id = op.product_id
@@ -167,6 +175,7 @@ BEGIN
             FROM (SELECT ot.id,
                          ot.order_id                                      "orderId",
                          jsonb_build_object('id', tt.id, 'name', tt.name) "type",
+                         tt.id                                            "typeId",
                          ot.amount,
                          ot.date,
                          vTotalPaid                                       "totalPaid"
@@ -185,6 +194,7 @@ SELECT DeleteFunctions('BoneareAdm', 'OrderAdd');
 CREATE OR REPLACE FUNCTION BoneareAdm.OrderAdd(
     pUserIdAction BoneareAdm.User.id%TYPE,
     pDescription  BoneareAdm.Order.description%TYPE,
+    pDate         BoneareAdm.Order.date%TYPE,
     pClientId     BoneareAdm.Order.client_id%TYPE,
     pProducts     JSONB,
     pTransactions JSONB
@@ -201,11 +211,11 @@ Ex................:
 
 SELECT * FROM BoneareAdm.OrderAdd(
    1,               -- pUserIdAction
-   'Order Test',    -- pName
-   '45338491800',   -- pDocument
    null,            -- pDescription
-   null,            -- pPhones
-   null             -- pEmails
+   null,            -- pDate
+   1,               -- pClientId
+   null,            -- pProducts
+   null             -- pTransactions
 );
 
 */
@@ -216,8 +226,8 @@ DECLARE
     vId             BoneareAdm.Order.id%TYPE;
 
 BEGIN
-    INSERT INTO BoneareAdm.Order (description, client_id, created_by)
-    VALUES (pDescription, pClientId, pUserIdAction)
+    INSERT INTO BoneareAdm.Order (description, date, client_id, created_by)
+    VALUES (pDescription, pDate, pClientId, pUserIdAction)
         RETURNING id
             INTO vId;
 
@@ -232,9 +242,9 @@ BEGIN
     IF pTransactions IS NOT NULL
     THEN
         INSERT INTO BoneareAdm.Order_Transaction (order_id, type, date, amount, created_by)
-        SELECT vId, ("type" ->> 'id') :: SMALLINT, "date", "amount", pUserIdAction
+        SELECT vId, "typeId", "date", "amount", pUserIdAction
         FROM jsonb_to_recordset(pTransactions)
-                 AS x ("type" JSONB, "date" TIMESTAMP WITH TIME ZONE, "amount" NUMERIC(10, 2));
+                 AS x ("typeId" SMALLINT, "date" TIMESTAMP WITH TIME ZONE, "amount" NUMERIC(10, 2));
     END IF;
 
     RETURN
@@ -258,12 +268,11 @@ SELECT DeleteFunctions('BoneareAdm', 'OrderUpdate');
 CREATE OR REPLACE FUNCTION BoneareAdm.OrderUpdate(
     pUserIdAction BoneareAdm.User.id%TYPE,
     pId           BoneareAdm.Order.id%TYPE,
-    pName         BoneareAdm.Order.name%TYPE,
-    pDocument     BoneareAdm.Order.document%TYPE,
     pDescription  BoneareAdm.Order.description%TYPE,
-    pAddress      JSONB,
-    pPhones       JSONB,
-    pEmails       JSONB
+    pDate         BoneareAdm.Order.date%TYPE,
+    pClientId     BoneareAdm.Order.client_id%TYPE,
+    pProducts     JSONB,
+    pTransactions JSONB
 )
     RETURNS JSONB AS $$
 
@@ -272,17 +281,17 @@ Documentation
 Source file.......: order.sql
 Description.......: Update a order
 Author............: Ítalo Andrade
-Date..............: 10/10/2018
+Date..............: 27/10/2018
 Ex................:
 
 SELECT * FROM BoneareAdm.OrderUpdate(
    1,               -- pUserIdAction
    12,              -- pId
-   'Order Test',   -- pName
-   '45338491800',   -- pDocument
    null,            -- pDescription
-   null,            -- pPhones
-   null             -- pEmails
+   null,            -- pDate
+   1,               -- pClientId
+   null,            -- pProducts
+   null             -- pTransactions
 );
 
 */
@@ -297,97 +306,72 @@ BEGIN
         RETURN
         jsonb_build_object(
             'code', 1,
-            'message', 'Ordere não encontrado'
-        );
-    END IF;
-
-    IF EXISTS(SELECT 1 FROM BoneareAdm.Order c WHERE c.document = pDocument
-                                                 AND c.id <> pId)
-    THEN
-        RETURN
-        jsonb_build_object(
-            'code', 2,
-            'message', 'Documento existente'
+            'message', 'Pedido não encontrado'
         );
     END IF;
 
     UPDATE BoneareAdm.Order
-    SET name             = pName,
-        document         = pDocument,
-        description      = pDescription,
+    SET description      = pDescription,
+        date             = pDate,
+        client_id        = pClientId,
         last_update_by   = pUserIdAction,
         last_update_date = CURRENT_TIMESTAMP
     WHERE id = pId;
 
-    IF EXISTS(SELECT 1 FROM BoneareAdm.Order_Address WHERE order_id = pId)
-    THEN
-        UPDATE BoneareAdm.Order_Address
-        SET zip_code   = pAddress ->> 'zipCode',
-            street     = pAddress ->> 'street',
-            number     = pAddress ->> 'number',
-            complement = pAddress ->> 'complement',
-            district   = pAddress ->> 'district',
-            city       = pAddress ->> 'city',
-            state      = pAddress ->> 'state'
-        WHERE order_id = pId;
-    ELSE
-        INSERT INTO BoneareAdm.Order_Address (order_id, zip_code, street, number, complement, district, city, state)
-        VALUES (pId,
-                pAddress ->> 'zipCode',
-                pAddress ->> 'street',
-                pAddress ->> 'number',
-                pAddress ->> 'complement',
-                pAddress ->> 'district',
-                pAddress ->> 'city',
-                pAddress ->> 'state');
-    END IF;
-
-    IF pPhones IS NOT NULL
+    IF pProducts IS NOT NULL
     THEN
         DELETE
-        FROM BoneareAdm.Order_Phone
+        FROM BoneareAdm.Order_Product
         WHERE order_id = pId
-          AND id NOT IN (SELECT "id" FROM jsonb_to_recordset(pPhones)
+          AND id NOT IN (SELECT "id" FROM jsonb_to_recordset(pProducts)
                                               AS x ("id" INTEGER) WHERE "id" IS NOT NULL);
 
-        INSERT INTO BoneareAdm.Order_Phone (order_id, number)
-        SELECT pId, "number"
-        FROM jsonb_to_recordset(pPhones)
-                 AS x ("id" TEXT, "number" BIGINT)
+        INSERT INTO BoneareAdm.Order_Product (order_id, product_id, quantity, entry, created_by)
+        SELECT pId, "productId", "quantity", "entry", pUserIdAction
+        FROM jsonb_to_recordset(pProducts)
+                 AS x ("id" TEXT, "productId" INTEGER, "quantity" INTEGER, "entry" BOOLEAN)
         WHERE "id" IS NULL;
 
-        UPDATE BoneareAdm.Order_Phone
-        SET number = cp."number"
-        FROM (SELECT "id", "number"
-              FROM jsonb_to_recordset(pPhones)
-                       AS x ("id" INTEGER, "number" BIGINT)
-              WHERE "id" IS NOT NULL) cp
+        UPDATE BoneareAdm.Order_Product
+        SET product_id       = op."productId",
+            quantity         = op."quantity",
+            entry            = op."entry",
+            last_update_by   = pUserIdAction,
+            last_update_date = CURRENT_TIMESTAMP
+        FROM (SELECT "id", "productId", "quantity", "entry"
+              FROM jsonb_to_recordset(pProducts)
+                       AS x ("id" INTEGER, "productId" INTEGER, "quantity" INTEGER, "entry" BOOLEAN)
+              WHERE "id" IS NOT NULL) op
         WHERE order_id = pId
-          AND BoneareAdm.Order_Phone.id = cp."id";
+          AND BoneareAdm.Order_Product.id = op."id";
     END IF;
 
-    IF pEmails IS NOT NULL
+    IF pTransactions IS NOT NULL
     THEN
         DELETE
-        FROM BoneareAdm.Order_Email
+        FROM BoneareAdm.Order_Transaction
         WHERE order_id = pId
-          AND id NOT IN (SELECT "id" FROM jsonb_to_recordset(pEmails)
+          AND id NOT IN (SELECT "id" FROM jsonb_to_recordset(pTransactions)
                                               AS x ("id" INTEGER) WHERE "id" IS NOT NULL);
 
-        INSERT INTO BoneareAdm.Order_Email (order_id, email)
-        SELECT pId, "email"
-        FROM jsonb_to_recordset(pEmails)
-                 AS x ("id" INTEGER, "email" TEXT)
+        INSERT INTO BoneareAdm.Order_Transaction (order_id, type, date, amount, created_by)
+        SELECT pId, "typeId", "date", "amount", pUserIdAction
+        FROM jsonb_to_recordset(pTransactions)
+                 AS x ("id" TEXT, "typeId" SMALLINT, "date" TIMESTAMP WITH TIME ZONE, "amount" NUMERIC(10, 2))
         WHERE "id" IS NULL;
 
-        UPDATE BoneareAdm.Order_Email
-        SET email = ce."email"
-        FROM (SELECT "id", "email"
-              FROM jsonb_to_recordset(pEmails)
-                       AS x ("id" INTEGER, "email" TEXT)
-              WHERE "id" IS NOT NULL) ce
+        UPDATE BoneareAdm.Order_Transaction
+        SET type             = op."typeId",
+            date             = op."date",
+            amount           = op."amount",
+            last_update_by   = pUserIdAction,
+            last_update_date = CURRENT_TIMESTAMP
+        FROM (SELECT "id", "typeId", "date", "amount"
+              FROM jsonb_to_recordset(pTransactions)
+                       AS x ("id" INTEGER, "typeId" SMALLINT, "date" TIMESTAMP WITH TIME ZONE, "amount" NUMERIC(10, 2))
+              WHERE "id" IS NOT NULL) op
         WHERE order_id = pId
-          AND BoneareAdm.Order_Email.id = ce."id";
+          AND BoneareAdm.Order_Transaction.id = op."id";
     END IF;
 
     RETURN
@@ -415,7 +399,7 @@ Documentation
 Source file.......: order.sql
 Description.......: Remove a order
 Author............: Ítalo Andrade
-Date..............: 10/10/2018
+Date..............: 27/10/2018
 Ex................:
 
 SELECT * FROM BoneareAdm.OrderRemove(
@@ -436,16 +420,25 @@ BEGIN
         RETURN
         jsonb_build_object(
             'code', 1,
-            'message', 'Ordere não encontrado'
+            'message', 'Pedido não encontrado'
         );
     END IF;
 
-    SELECT to_jsonb(o) INTO vNewRelation FROM BoneareAdm.Order o WHERE o.order_id = pId;
+    SELECT to_jsonb(op) INTO vNewRelation FROM BoneareAdm.Order_Product op WHERE op.order_id = pId;
     IF vNewRelation IS NOT NULL
     THEN
         vRelations = vRelations || jsonb_build_object(
-            'relation', 'Pedido ' || COALESCE(vNewRelation ->> 'description', vNewRelation ->> 'id'),
-            'url', '/order/' || (vNewRelation ->> 'id')
+            'relation', 'Produto de pedido ' || (vNewRelation ->> 'id'),
+            'url', '/order/' || (vNewRelation ->> 'order_id')
+        );
+    END IF;
+
+    SELECT to_jsonb(ot) INTO vNewRelation FROM BoneareAdm.Order_Transaction ot WHERE ot.order_id = pId;
+    IF vNewRelation IS NOT NULL
+    THEN
+        vRelations = vRelations || jsonb_build_object(
+            'relation', 'Transação de pedido ' || (vNewRelation ->> 'id'),
+            'url', '/order/' || (vNewRelation ->> 'order_id')
         );
     END IF;
 
@@ -459,9 +452,6 @@ BEGIN
         );
     END IF;
 
-    DELETE FROM BoneareAdm.Order_Address WHERE order_id = pId;
-    DELETE FROM BoneareAdm.Order_Phone WHERE order_id = pId;
-    DELETE FROM BoneareAdm.Order_Email WHERE order_id = pId;
     DELETE FROM BoneareAdm.Order WHERE id = pId;
 
     RETURN

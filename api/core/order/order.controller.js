@@ -37,7 +37,8 @@ async function add(req, res) {
     const params = {
         userIdAction: req.user.id,
         description: req.body.description,
-        client: req.body.client,
+        date: req.body.date,
+        clientId: req.body.clientId,
         products: req.body.products,
         transactions: req.body.transactions
     };
@@ -56,7 +57,8 @@ async function update(req, res) {
         userIdAction: req.user.id,
         id: req.params.id,
         description: req.body.description,
-        client: req.body.client,
+        date: req.body.date,
+        clientId: req.body.clientId,
         products: req.body.products,
         transactions: req.body.transactions
     };
