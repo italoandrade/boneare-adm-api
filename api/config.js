@@ -14,14 +14,14 @@ const config = {
         password: process.env.PGPASSWORD || '123',
     },
     hash: process.env.HASH || 'xirofompila',
-    s3: {
-        region: process.env.S3REGION || 'us-east-1',
-        bucket: process.env.S3BUCKET || 'boneareadm-dev',
-        accessKeyId: process.env.S3ACCESSKEYID,
-        secretAccessKey: process.env.S3SECRETACCESSKEY
-    }
+    // s3: {
+    //     region: process.env.S3REGION || 'us-east-1',
+    //     bucket: process.env.S3BUCKET || 'boneareadm-dev',
+    //     accessKeyId: process.env.S3ACCESSKEYID,
+    //     secretAccessKey: process.env.S3SECRETACCESSKEY
+    // }
 };
 config.url = `http://${config.host}${config.port ? ':' + config.port : ''}`;
-config.s3.url = 'https://s3.amazonaws.com/' + config.s3.bucket;
+// config.s3.url = 'https://s3.amazonaws.com/' + config.s3.bucket;
 
 module.exports = config;
