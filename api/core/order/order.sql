@@ -10,14 +10,16 @@ CREATE OR REPLACE FUNCTION BoneareAdm.OrderFindAll(
     pPageSize   INTEGER
 )
     RETURNS TABLE(
-        "lineCount"    BIGINT,
-        "id"           BoneareAdm.Order.id%TYPE,
-        "description"  BoneareAdm.Order.description%TYPE,
-        "client"       BoneareAdm.Client.name%TYPE,
-        "totalCost"    DECIMAL(10, 2),
-        "totalPaid"    DECIMAL(10, 2),
-        "totalCostAll" DECIMAL(10, 2),
-        "totalPaidAll" DECIMAL(10, 2)
+        "lineCount"      BIGINT,
+        "id"             BoneareAdm.Order.id%TYPE,
+        "description"    BoneareAdm.Order.description%TYPE,
+        "client"         BoneareAdm.Client.name%TYPE,
+        "totalCost"      DECIMAL(10, 2),
+        "totalPaid"      DECIMAL(10, 2),
+        "totalWeight"    DECIMAL(10, 2),
+        "totalCostAll"   DECIMAL(10, 2),
+        "totalPaidAll"   DECIMAL(10, 2),
+        "totalWeightAll" DECIMAL(10, 2)
     ) AS $$
 
 /*
@@ -33,8 +35,9 @@ SELECT * FROM BoneareAdm.OrderFindAll(null, 'totalPaid', 'asc', 0, 10);
 */
 
 DECLARE
-    vTotalCostAll DECIMAL(10, 2);
-    vTotalPaidAll DECIMAL(10, 2);
+    vTotalCostAll   DECIMAL(10, 2);
+    vTotalPaidAll   DECIMAL(10, 2);
+    vTotalWeightAll DECIMAL(10, 2);
 
 BEGIN
     SELECT SUM(op.quantity * p.price * iif(op.entry, -1, 1)) INTO vTotalCostAll
@@ -43,6 +46,10 @@ BEGIN
 
     SELECT SUM(ot.amount * iif(ot.type = 1, 1, -1)) INTO vTotalPaidAll FROM BoneareAdm.Order_Transaction ot;
 
+    SELECT SUM(op.quantity * p.weight * iif(op.entry, 1, -1)) INTO vTotalWeight All
+    FROM BoneareAdm.Order_Product op
+             INNER JOIN BoneareAdm.Product p ON p.id = op.product_id;
+
     RETURN QUERY
     SELECT sq.lineCount,
            sq.id,
@@ -50,8 +57,10 @@ BEGIN
            sq.client,
            sq.totalCost,
            sq.totalPaid,
+           sq.totalWeight,
            sq.vTotalCostAll,
-           sq.vTotalPaidAll
+           sq.vTotalPaidAll,
+           sq.vTotalWeightAll
     FROM (SELECT COUNT(1) OVER (PARTITION BY 1) lineCount,
                  o.id,
                  o.description,
@@ -63,8 +72,13 @@ BEGIN
                  (SELECT SUM(ot.amount * iif(ot.type = 1, 1, -1))
                   FROM BoneareAdm.Order_Transaction ot
                   WHERE ot.order_id = o.id)     totalPaid,
+                 (SELECT SUM(op.quantity * p.weight * iif(op.entry, 1, -1))
+                  FROM BoneareAdm.Order_Product op
+                           INNER JOIN BoneareAdm.Product p ON p.id = op.product_id
+                  WHERE op.order_id = o.id)     totalWeight,
                  vTotalCostAll,
                  vTotalPaidAll,
+                 vTotalWeightAll,
                  o.creation_date,
                  o.last_update_date
           FROM BoneareAdm.Order o
@@ -217,8 +231,8 @@ BEGIN
 
     IF pTransactions IS NOT NULL
     THEN
-        INSERT INTO BoneareAdm.Order_Transaction (order_id, type, date, amount)
-        SELECT vId, ("type" ->> 'id') :: SMALLINT, "date", "amount"
+        INSERT INTO BoneareAdm.Order_Transaction (order_id, type, date, amount, created_by)
+        SELECT vId, ("type" ->> 'id') :: SMALLINT, "date", "amount", pUserIdAction
         FROM jsonb_to_recordset(pTransactions)
                  AS x ("type" JSONB, "date" TIMESTAMP WITH TIME ZONE, "amount" NUMERIC(10, 2));
     END IF;
